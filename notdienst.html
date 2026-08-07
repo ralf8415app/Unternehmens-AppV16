@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; media-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'none'; worker-src 'self'; manifest-src 'self'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Schadenmeldung">
+<meta name="theme-color" content="#123c5a">
+<link rel="manifest" href="manifest.json">
+<title>Notdienst Asyl</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;margin:0;background:#eef1f4;color:#111}
+header{background:#123c5a;color:white;padding:16px;text-align:center;font-size:23px;font-weight:800;position:sticky;top:0;z-index:5}
+main{max-width:1150px;margin:auto;padding:14px}
+.card{background:white;border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 2px 8px #0002}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+label{font-weight:700;font-size:14px;display:block;margin-bottom:5px}
+input,select,textarea,button{font-size:17px;width:100%;box-sizing:border-box;padding:11px;border-radius:10px;border:1px solid #bbb}
+textarea{min-height:90px}
+button{border:0;background:#123c5a;color:white;font-weight:800}
+button.green{background:#1b6e3c}button.red{background:#9b1d1d}button.grey{background:#666}button.help{background:#6b4f9b}button.damage{background:#b55b00}
+.helpOverlay{display:none;position:fixed;inset:0;background:#0008;z-index:50;padding:20px;overflow:auto}.helpBox{max-width:800px;margin:30px auto;background:white;border-radius:16px;padding:22px;box-shadow:0 8px 30px #0005}.helpBox h2{margin-top:0;color:#123c5a}.helpBox h3{margin-bottom:5px}.helpBox p,.helpBox li{line-height:1.5}.helpBox button{margin-top:14px}
+table{width:100%;border-collapse:collapse;background:white;font-size:14px}
+th,td{border:1px solid #bbb;padding:7px;vertical-align:top}
+th{background:#dfeaf2}
+.req{color:#b00020}.error{border:2px solid #b00020!important;background:#fff0f0!important}
+.note{font-size:14px;color:#444;line-height:1.45}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.grid{grid-template-columns:1fr}}
+@media print{button,.noPrint,input,select,textarea,label,.note{display:none!important}body{background:white}.card{box-shadow:none}}
+
+.footerInfo{margin:18px 0 28px;padding:16px;border-radius:14px;background:#fff;box-shadow:0 2px 8px #0002;font-size:13px;line-height:1.5;color:#333}
+</style>
+
+</head>
+<body>
+<div id="storageStatus" style="background:#fff3cd;border:1px solid #d6b85b;padding:12px 14px;margin:10px;border-radius:10px;font:600 15px Arial,sans-serif;line-height:1.35">Speichertest läuft …</div>
+
+<header>Notdienst Asyl</header>
+<main>
+<section class="card noPrint">
+<h2>Einsatz erfassen</h2>
+<p class="note"><b>Microsoft Edge:</b> Die App prüft beim Start automatisch, ob die Unternehmensrichtlinie lokalen Speicher zulässt. Wenn ja, bleiben Einträge nach dem Schließen erhalten. Wenn nein, wird automatisch Sitzungsmodus verwendet.</p>
+
+<div class="grid">
+<div><label>KW <span class="req">*</span></label><input id="kw" inputmode="numeric" placeholder="z.B. 04"></div>
+<div><label>Datum <span class="req">*</span></label><input id="datum" type="date"></div>
+<div><label>Von <span class="req">*</span></label><input id="von" type="time" oninput="calcHours()"></div>
+<div><label>Bis <span class="req">*</span></label><input id="bis" type="time" oninput="calcHours()"></div>
+<div><label>Std.</label><input id="stunden" readonly></div>
+<div><label>Mitarbeiter <span class="req">*</span></label>
+<select id="mitarbeiter" onchange="setRole()"><option value="">Bitte lokal anlegen</option></select></div>
+<div><label>Rolle</label><input id="rolle" readonly></div>
+<div><label>Pers.-Nr.</label><input id="persnr" placeholder="optional"></div>
+<div><label>Melder <span class="req">*</span></label>
+<select id="melder">
+<option value="">Bitte auswählen</option>
+<option value="Telog">Telog</option>
+<option value="Wachdienst">Wachdienst</option>
+<option value="Betreuung">Betreuung</option>
+<option value="Bewohner">Bewohner</option>
+</select></div>
+</div>
+
+<br>
+<label>Objekt / Straße <span class="req">*</span></label>
+<select id="objekt">
+<option value="">Bitte auswählen</option>
+<option value="4003|Bretzenheimer Str.">4003 – Bretzenheimer Str.</option>
+<option value="4007|Alte Ziegelei">4007 – Alte Ziegelei</option>
+<option value="4008|Ludwigsb. Str.">4008 – Ludwigsb. Str.</option>
+<option value="4009|Zwerchallee 14/16">4009 – Zwerchallee 14/16</option>
+<option value="4010|Wilh.-Quetsch">4010 – Wilh.-Quetsch</option>
+<option value="4011|Wormser Straße 187">4011 – Wormser Straße 187</option>
+<option value="4013|Zwerchallee 8–12 und 18–20">4013 – Zwerchallee 8–12 und 18–20</option>
+<option value="4014|Housing Area">4014 – Housing Area</option>
+<option value="4020|Allianzhaus">4020 – Allianzhaus</option>
+<option value="4024|Hotel Alt Finthen">4024 – Hotel Alt Finthen</option>
+<option value="4025|Hotel Draiser Hof">4025 – Hotel Draiser Hof</option>
+<option value="4026|Heiligkreuzweg">4026 – Heiligkreuzweg</option>
+<option value="4027|Hechtsheimer Str.">4027 – Hechtsheimer Str.</option>
+<option value="4028|Isaac-Fulda">4028 – Isaac-Fulda</option>
+<option value="4029|Layenhof">4029 – Layenhof</option>
+<option value="4030|Bahnhofstr.">4030 – Bahnhofstr.</option>
+<option value="4031|Nikolaus-Kopernikus">4031 – Nikolaus-Kopernikus</option>
+<option value="4032|Zitadelle">4032 – Zitadelle</option>
+<option value="4033|Layenhof 2">4033 – Layenhof 2</option>
+</select>
+
+<br><br>
+<label>Textbaustein</label>
+<select id="baustein" onchange="insertBlock()">
+<option value="">Bitte auswählen</option>
+<option>Leckage beseitigt</option>
+<option>Verstopfung beseitigt</option>
+<option>Siphon gereinigt</option>
+<option>Armatur erneuert</option>
+<option>Dichtung erneuert</option>
+<option>Kein Schaden feststellbar</option>
+<option>Weitere Arbeiten erforderlich</option>
+<option>Ersatzteil bestellt</option>
+<option>WC instandgesetzt</option>
+<option>Heizung entlüftet</option>
+<option>Notdienst abgeschlossen</option>
+<option>FI-Schutzschalter ausgelöst</option>
+<option>FI-Schutzschalter wieder eingeschaltet</option>
+<option>BMZ-Anlage zurückgesetzt – Fehler kurz beschreiben:</option>
+<option>Firma beauftragt – Name der Firma:</option>
+<option>Bewohner hat sich ausgesperrt – Wohnungstür geöffnet</option>
+<option>Fenster gang- und schließbar gemacht</option>
+<option>Türschließer gang- und schließbar gemacht</option>
+<option>Unfallgefahr beseitigt</option>
+</select>
+
+<br><br>
+<label>Schadensmeldung <span class="req">*</span></label>
+<textarea id="schaden"></textarea>
+<div class="privacyBox" style="margin-top:14px">
+<h3>Mitarbeiter lokal verwalten</h3>
+<p class="note">Im ausgelieferten Notdienst-Programm stehen keine Mitarbeiternamen. Namen werden nur auf diesem Gerät in Microsoft Edge gespeichert, sofern die Unternehmensrichtlinie lokalen Speicher erlaubt.</p>
+<div class="grid">
+<div><label>Name</label><input id="employeeName" placeholder="Vor- und Nachname"></div>
+<div><label>Rolle</label><select id="employeeRole"><option>Hausmeister</option><option>Springer</option><option>Teamleitung</option><option>Sonstige</option></select></div>
+</div>
+<br><div class="toolbar"><button class="grey" type="button" onclick="saveEmployee()">Mitarbeiter lokal speichern</button><button class="red" type="button" onclick="deleteEmployee()">Ausgewählten Mitarbeiter löschen</button></div>
+</div>
+
+
+<br><br>
+<div class="grid">
+<button onclick="addEntry()">Eintrag speichern</button>
+<button class="green" onclick="exportXLSX()">Echte XLSX erstellen</button>
+<button class="grey" onclick="exportCSV()">CSV erstellen</button>
+<button class="red" onclick="clearEntries()">Alle Einträge löschen</button>
+</div>
+<br>
+<button class="grey" onclick="window.print()">Drucken/PDF</button>
+<br><br><div class="grid noPrint">
+<button class="green" onclick="exportBackup()">Datensicherung erstellen</button>
+<button class="grey" onclick="document.getElementById('backupFile').click()">Datensicherung wiederherstellen</button>
+</div>
+<input id="backupFile" type="file" accept=".json,application/json" style="display:none" onchange="importBackup(event)">
+<br><br><div class="grid noPrint">
+<button class="damage" onclick="sendCurrentToDamage()">Schaden beauftragen</button>
+<button class="grey" onclick="location.href='index.html'">← Zur Schadenmeldung</button>
+<button class="help" onclick="openHelp()">App-Anleitung öffnen</button>
+</div>
+
+</section>
+
+<section class="card">
+<h2>Gespeicherte Einträge</h2>
+<table id="tbl">
+<thead><tr>
+<th>KW</th><th>Objekt</th><th>Straße</th><th>Datum</th><th>Von</th><th>Bis</th><th>Monteur</th><th>Pers.-Nr.</th><th>Melder</th><th>Std.</th><th>Schadensmeldung</th><th class="noPrint">Aktion</th>
+</tr></thead>
+<tbody></tbody>
+</table>
+</section>
+
+<section class="footerInfo">
+<strong>© 2026 Ralf Peter Jung – Alle Rechte vorbehalten.</strong><br><br>
+<strong>Datenschutzhinweis:</strong><br>
+Alle in dieser App erfassten Daten werden ausschließlich lokal auf diesem Gerät gespeichert.
+Die App überträgt keine Einsatz-, Mitarbeiter- oder sonstigen erfassten Daten automatisch über das Internet oder an externe Server.
+Eine Datenübertragung erfolgt nur, wenn der Benutzer selbst eine externe Funktion wie den E-Mail-Versand oder eine externe Speicherung auswählt.
+</section>
+</main>
+
+<div id="helpOverlay" class="helpOverlay noPrint" onclick="if(event.target===this)closeHelp()">
+<div class="helpBox">
+<h2>Komplette App-Anleitung – Notdienst Asyl</h2>
+<p><b>Firmen-Geräte:</b> Funktionen können durch Unternehmensrichtlinien eingeschränkt sein. Namen und Einsätze werden nur lokal gespeichert, wenn Edge dies auf dem Gerät erlaubt.</p>
+<h3>1. Öffnen / Home-Bildschirm / Windows-App</h3>
+<p><b>iPad/iPhone Edge:</b> App in Edge öffnen und über Teilen/Browsermenü „Zum Home-Bildschirm“ wählen, sofern angeboten. Fehlt die Option, als Edge-Favorit verwenden. <b>Windows Edge:</b> (…) → Apps → Diese Website als App installieren bzw. das Installationssymbol in der Adressleiste verwenden.</p>
+<h3>2. Mitarbeiter lokal anlegen</h3><p>Name und Rolle im Bereich Mitarbeiter eingeben und lokal speichern. Es stehen keine festen Mitarbeiternamen im Server-Code.</p>
+<h3>3. Einsatz erfassen</h3><p>KW, Datum, Uhrzeit von/bis, Mitarbeiter, Melder, Objekt/Straße und Schadensmeldung ausfüllen. Stunden werden automatisch berechnet. Vorhandene Textbausteine können eingefügt und anschließend angepasst werden.</p>
+<h3>4. Eintrag speichern</h3><p>„Eintrag speichern“ speichert den Einsatz lokal und zeigt ihn in der Tabelle. Bei blockiertem lokalen Speicher bleiben Daten nur während der aktuellen Sitzung erhalten.</p>
+<h3>5. XLSX / CSV</h3><p>„Echte XLSX erstellen“ erzeugt eine Excel-Datei. „CSV erstellen“ erzeugt eine einfache Tabellen-Datei. Speichern oder Teilen hängt von den Freigaben des Geräts und der Unternehmensrichtlinie ab.</p>
+<h3>6. Drucken / PDF</h3><p>„Drucken/PDF“ öffnet die System-Druckfunktion. Dort kann – sofern vom Gerät unterstützt – auch als PDF gespeichert werden.</p>
+<h3>7. Datensicherung</h3><p>„Datensicherung erstellen“ sichert ausschließlich die Notdienst-Daten und die lokal angelegten Notdienst-Mitarbeiter. Die Schadensmeldungs-App wird nicht mitgesichert. Sicherungsdateien geschützt und nur in freigegebenen Unternehmensspeichern ablegen.</p>
+<h3>8. Wiederherstellen / Versionswechsel</h3><p>Vor einem Update ein Backup erstellen. In der neuen Version „Datensicherung wiederherstellen“ wählen und nur eine passende Notdienst-Sicherung verwenden. Vorhandene lokale Daten können beim Import ersetzt werden.</p>
+<h3>9. Schaden beauftragen</h3><p>„Schaden beauftragen“ übergibt die aktuellen Einsatzangaben an die getrennte Schaden- und Auftragsmeldung. Dort die übernommenen Angaben kontrollieren und fehlende Pflichtfelder ergänzen.</p>
+<h3>10. Bearbeiten / Löschen</h3><p>Gespeicherte Einsätze können einzeln bearbeitet oder gelöscht werden. „Alle Einträge löschen“ entfernt sämtliche Notdienst-Einträge auf diesem Gerät.</p>
+<h3>11. Offline / Datenschutz</h3><p>Nach einem vollständigen Online-Laden werden Programmdateien für Offline-Nutzung zwischengespeichert. Erfasste Nutzdaten werden nicht automatisch an den Hosting-Server gesendet. Hosting, E-Mail, Teilen oder externe Speicherung können jedoch technische bzw. bewusst ausgewählte Daten an die jeweiligen Dienste übertragen.</p>
+<div style="border-top:2px solid #dde3e8;margin-top:22px;padding-top:18px">
+<h2>Complete App Guide – Emergency Duty</h2>
+<p><b>Managed company devices:</b> Features may be restricted by company policy. Names and duty records are stored persistently only if Edge storage is permitted on the device.</p>
+<h3>1. Open / Home Screen / Windows app</h3><p><b>iPad/iPhone Edge:</b> Open the app in Edge and use Share/browser menu → “Add to Home Screen” if available. Otherwise use an Edge favorite. <b>Windows Edge:</b> (…) → Apps → Install this site as an app, or use the install icon in the address bar.</p>
+<h3>2. Add employee locally</h3><p>Enter name and role in the employee section and save locally. Employee names are not hard-coded in the server files.</p>
+<h3>3. Record duty call</h3><p>Enter calendar week, date, start/end time, employee, reporter, property/street and incident description. Hours are calculated automatically. Prepared text blocks can be inserted and edited.</p>
+<h3>4. Save entry</h3><p>“Eintrag speichern” stores the duty record locally and shows it in the table. If local storage is blocked, data remains only for the current session.</p>
+<h3>5. XLSX / CSV</h3><p>“Echte XLSX erstellen” creates an Excel file; “CSV erstellen” creates a simple table file. Saving and sharing depend on device/company permissions.</p>
+<h3>6. Print / PDF</h3><p>“Drucken/PDF” opens the system print function. Where supported, the result can also be saved as PDF.</p>
+<h3>7. Backup</h3><p>“Datensicherung erstellen” backs up only Notdienst records and locally created Notdienst employees. Damage-app data is not included. Store backups only in an approved protected company location.</p>
+<h3>8. Restore / version change</h3><p>Create a backup before updating. In the new version select “Datensicherung wiederherstellen” and use only a matching Notdienst backup. Existing local data may be replaced.</p>
+<h3>9. Create damage order</h3><p>“Schaden beauftragen” transfers the current duty information to the separate damage/work-order app. Review transferred information and complete missing mandatory fields.</p>
+<h3>10. Edit / delete</h3><p>Stored duty records can be edited or deleted individually. “Alle Einträge löschen” removes all Notdienst records on this device.</p>
+<h3>11. Offline / privacy</h3><p>After one complete online load, program files are cached for offline use. Entered user data is not automatically sent to the hosting server. Hosting, email, sharing and external storage may still process technical data or data deliberately selected by the user.</p>
+</div>
+<button onclick="closeHelp()">Anleitung / Guide schließen</button>
+</div></div>
+
+<script>
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+var STORAGE_KEY="notdienst_asyl_eintraege_v3";
+var EMPLOYEE_KEY="notdienst_mitarbeiter_lokal_v1";
+var SESSION_ENTRIES=[];
+var LOCAL_STORAGE_OK=false;
+function testLocalStorage(){try{var k="__edge_notdienst_test__";localStorage.setItem(k,"1");var ok=localStorage.getItem(k)==="1";localStorage.removeItem(k);return ok;}catch(e){return false;}}
+LOCAL_STORAGE_OK=testLocalStorage();
+var entries=loadEntries();
+var employees=loadEmployees();
+var editIndex=-1;
+function openHelp(){document.getElementById("helpOverlay").style.display="block";document.body.style.overflow="hidden";}
+function closeHelp(){document.getElementById("helpOverlay").style.display="none";document.body.style.overflow="";}
+
+
+function loadEntries(){try{if(LOCAL_STORAGE_OK){var raw=localStorage.getItem(STORAGE_KEY);return raw?JSON.parse(raw):[]}return SESSION_ENTRIES.slice();}catch(e){return SESSION_ENTRIES.slice();}}
+function migrateEntries(){
+  var changed=false;
+  entries.forEach(function(e){
+    if(typeof e.melder==="undefined"){ e.melder=""; changed=true; }
+  });
+  if(changed) saveEntries();
+}
+
+function saveEntries(){try{if(LOCAL_STORAGE_OK){localStorage.setItem(STORAGE_KEY,JSON.stringify(entries));return true}}catch(e){} SESSION_ENTRIES=entries.slice();return false;}
+function loadEmployees(){try{if(LOCAL_STORAGE_OK){var raw=localStorage.getItem(EMPLOYEE_KEY);return raw?JSON.parse(raw):[]}return [];}catch(e){return [];}}
+function saveEmployees(){try{if(LOCAL_STORAGE_OK){localStorage.setItem(EMPLOYEE_KEY,JSON.stringify(employees));return true}}catch(e){} return false;}
+function renderEmployees(selectedName){
+  var select=document.getElementById("mitarbeiter");
+  select.innerHTML='<option value="">Bitte auswählen</option>';
+  employees.forEach(function(x){var o=document.createElement("option");o.value=x.name+"|"+x.role;o.textContent=x.name;select.appendChild(o);});
+  if(selectedName){for(var i=0;i<select.options.length;i++){if(select.options[i].value.split("|")[0]===selectedName){select.selectedIndex=i;break;}}}
+  setRole();
+}
+function saveEmployee(){
+  var name=document.getElementById("employeeName").value.trim(), role=document.getElementById("employeeRole").value;
+  if(!name){alert("Bitte einen Namen eingeben.");return;}
+  var existing=employees.find(function(x){return x.name.toLowerCase()===name.toLowerCase();});
+  if(existing) existing.role=role; else employees.push({name:name,role:role});
+  saveEmployees(); document.getElementById("employeeName").value=""; renderEmployees(name);
+  alert(LOCAL_STORAGE_OK?"Mitarbeiter dauerhaft lokal in Edge gespeichert.":"Der Name ist nur für diese geöffnete Sitzung verfügbar, weil die Unternehmensrichtlinie dauerhafte Speicherung blockiert.");
+}
+function deleteEmployee(){
+  var select=document.getElementById("mitarbeiter"); if(!select.value){alert("Bitte zuerst einen Mitarbeiter auswählen.");return;}
+  var name=select.value.split("|")[0];
+  if(confirm("Mitarbeiter „"+name+"“ aus der lokalen Liste löschen? Bereits gespeicherte Notdiensteinträge bleiben unverändert.")){employees=employees.filter(function(x){return x.name!==name;});saveEmployees();renderEmployees();}
+}
+
+
+window.onload=function(){
+  var el=document.getElementById("storageStatus");
+  if(LOCAL_STORAGE_OK){el.style.background="#e7f6ec";el.style.borderColor="#75b987";el.innerHTML="<b>Edge-Speichertest: OK.</b> Notdiensteinträge können auf diesem Gerät dauerhaft lokal gespeichert werden.";}else{el.style.background="#fde8e8";el.style.borderColor="#d88";el.innerHTML="<b>Edge-Speichertest: durch Richtlinie blockiert.</b> Einträge bleiben nur erhalten, solange diese Seite geöffnet ist. Vor dem Schließen Excel/Backup erzeugen oder an die Schadenmeldung übergeben.";}
+  entries=loadEntries();
+  employees=loadEmployees();
+  renderEmployees();
+  document.getElementById("datum").value=new Date().toISOString().slice(0,10);
+  migrateEntries();
+  render();
+};
+
+function setRole(){
+  var m=document.getElementById("mitarbeiter").value.split("|");
+  document.getElementById("rolle").value=m[1]||"";
+}
+function insertBlock(){
+  var b=document.getElementById("baustein"),s=document.getElementById("schaden");
+  if(!b.value)return;
+  s.value=s.value?s.value+"\n"+b.value:b.value;
+  b.value="";
+}
+function calcHours(){
+  var von=document.getElementById("von").value,bis=document.getElementById("bis").value,out=document.getElementById("stunden");
+  if(!von||!bis){out.value="";return}
+  var a=von.split(":").map(Number),b=bis.split(":").map(Number);
+  var start=a[0]*60+a[1],end=b[0]*60+b[1];
+  if(end<start)end+=1440;
+  var diff=(end-start)/60;
+  if(diff<=0||diff>24){out.value="";return}
+  out.value=diff.toFixed(2).replace(".",",");
+}
+function mark(id,ok){
+  var el=document.getElementById(id);
+  if(ok)el.classList.remove("error");else el.classList.add("error");
+}
+function validate(){
+  calcHours();
+  var ok=true;
+  ["kw","datum","von","bis","mitarbeiter","objekt","melder","schaden"].forEach(function(id){
+    var good=!!String(document.getElementById(id).value||"").trim();
+    mark(id,good);if(!good)ok=false;
+  });
+  var goodHours=!!document.getElementById("stunden").value;
+  mark("stunden",goodHours);if(!goodHours)ok=false;
+  if(!ok)alert("Bitte alle Pflichtfelder ausfüllen.");
+  return ok;
+}
+function addEntry(){
+  if(!validate())return;
+  var obj=document.getElementById("objekt").value.split("|");
+  var mit=document.getElementById("mitarbeiter").value.split("|");
+  var entry={
+    kw:document.getElementById("kw").value.trim(),
+    objekt:obj[0],
+    strasse:obj[1],
+    datum:document.getElementById("datum").value,
+    von:document.getElementById("von").value,
+    bis:document.getElementById("bis").value,
+    monteur:mit[0],
+    rolle:mit[1]||"",
+    persnr:document.getElementById("persnr").value.trim(),
+    melder:document.getElementById("melder").value,
+    std:document.getElementById("stunden").value,
+    schaden:document.getElementById("schaden").value.trim()
+  };
+
+  if(editIndex>=0){
+    entries[editIndex]=entry;
+    editIndex=-1;
+    alert("Eintrag geändert.");
+  }else{
+    entries.push(entry);
+    alert("Eintrag gespeichert.");
+  }
+
+  saveEntries();
+  render();
+  document.getElementById("objekt").value="";
+  document.getElementById("von").value="";
+  document.getElementById("bis").value="";
+  document.getElementById("stunden").value="";
+  document.getElementById("melder").value="";
+  document.getElementById("schaden").value="";
+}
+function transferToDamage(e){
+  if(!e)return;
+  try{
+    var payload={
+      datum:e.datum||document.getElementById("datum").value||new Date().toISOString().slice(0,10),
+      objekt:e.objekt||"", strasse:e.strasse||"", melder:e.melder||"",
+      monteur:e.monteur||"", rolle:e.rolle||"", schaden:e.schaden||"", source:"Notdienst Asyl"
+    };
+    location.href="index.html#transfer="+encodeURIComponent(JSON.stringify(payload));
+  }catch(err){ alert("Die Übergabe an die Schadenmeldung ist fehlgeschlagen."); }
+}
+function sendCurrentToDamage(){
+  var obj=document.getElementById("objekt").value.split("|");
+  var mit=document.getElementById("mitarbeiter").value.split("|");
+  var e={
+    datum:document.getElementById("datum").value,
+    objekt:obj[0]||"", strasse:obj[1]||"",
+    melder:document.getElementById("melder").value,
+    monteur:mit[0]||"", rolle:mit[1]||"",
+    schaden:document.getElementById("schaden").value.trim()
+  };
+  if(!e.objekt && !e.schaden){
+    if(!confirm("Objekt und Schadentext sind noch leer. Schadenmeldung trotzdem öffnen?"))return;
+  }
+  transferToDamage(e);
+}
+
+function render(){
+  var body=document.querySelector("#tbl tbody");
+  body.innerHTML="";
+  entries.forEach(function(e,idx){
+    var tr=document.createElement("tr");
+    ["kw","objekt","strasse","datum","von","bis","monteur","persnr","melder","std","schaden"].forEach(function(k){
+      var td=document.createElement("td");
+      td.textContent=(k==="datum") ? formatDateDE(e[k]) : (e[k]||"");
+      tr.appendChild(td);
+    });
+
+    var action=document.createElement("td");
+    action.className="noPrint";
+
+    var editBtn=document.createElement("button");
+    editBtn.className="grey";
+    editBtn.textContent="Bearbeiten";
+    editBtn.style.marginBottom="5px";
+    editBtn.onclick=function(){editEntry(idx);};
+
+    var orderBtn=document.createElement("button");
+    orderBtn.className="damage";
+    orderBtn.textContent="Schaden beauftragen";
+    orderBtn.style.marginBottom="5px";
+    orderBtn.onclick=function(){transferToDamage(e);};
+
+    var delBtn=document.createElement("button");
+    delBtn.className="red";
+    delBtn.textContent="Löschen";
+    delBtn.onclick=function(){
+      if(confirm("Diesen Eintrag löschen?")){
+        entries.splice(idx,1);
+        saveEntries();
+        render();
+      }
+    };
+
+    action.appendChild(editBtn);
+    action.appendChild(orderBtn);
+    action.appendChild(delBtn);
+    tr.appendChild(action);
+    body.appendChild(tr);
+  });
+}
+
+function editEntry(idx){
+  var e=entries[idx];
+  if(!e)return;
+
+  editIndex=idx;
+  document.getElementById("kw").value=e.kw||"";
+  document.getElementById("datum").value=e.datum||"";
+  document.getElementById("von").value=e.von||"";
+  document.getElementById("bis").value=e.bis||"";
+  document.getElementById("stunden").value=e.std||"";
+  document.getElementById("persnr").value=e.persnr||"";
+  document.getElementById("melder").value=e.melder||"";
+  document.getElementById("schaden").value=e.schaden||"";
+  document.getElementById("objekt").value=(e.objekt||"")+"|"+(e.strasse||"");
+
+  var select=document.getElementById("mitarbeiter"), found=false;
+  for(var i=0;i<select.options.length;i++){
+    if(select.options[i].value.split("|")[0]===e.monteur){select.selectedIndex=i;found=true;break;}
+  }
+  if(!found && e.monteur){var o=document.createElement("option");o.value=e.monteur+"|"+(e.rolle||"");o.textContent=e.monteur;select.appendChild(o);select.value=o.value;}
+  setRole();
+  window.scrollTo({top:0,behavior:"smooth"});
+  alert("Eintrag geladen. Ändern und wieder auf Eintrag speichern drücken.");
+}
+function esc(x){return String(x||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function safeName(x){return String(x||"Datei").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Za-z0-9]+/g,"_");}
+function formatDateDE(value){
+  if(!value)return "";
+  var parts=String(value).split("-");
+  if(parts.length===3)return parts[2]+"."+parts[1]+"."+parts[0];
+  return value;
+}
+function xmlEscape(value){
+  return String(value == null ? "" : value)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;");
+}
+function colName(n){
+  var s="";
+  while(n>0){n--;s=String.fromCharCode(65+(n%26))+s;n=Math.floor(n/26);}
+  return s;
+}
+function crc32(bytes){
+  var table=crc32.table;
+  if(!table){
+    table=[];
+    for(var n=0;n<256;n++){
+      var c=n;
+      for(var k=0;k<8;k++) c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);
+      table[n]=c>>>0;
+    }
+    crc32.table=table;
+  }
+  var crc=0xFFFFFFFF;
+  for(var i=0;i<bytes.length;i++) crc=table[(crc^bytes[i])&255]^(crc>>>8);
+  return (crc^0xFFFFFFFF)>>>0;
+}
+function u16(v){return [v&255,(v>>>8)&255];}
+function u32(v){return [v&255,(v>>>8)&255,(v>>>16)&255,(v>>>24)&255];}
+function concatBytes(parts){
+  var len=0; parts.forEach(function(p){len+=p.length;});
+  var out=new Uint8Array(len),off=0;
+  parts.forEach(function(p){out.set(p,off);off+=p.length;});
+  return out;
+}
+function utf8(s){return new TextEncoder().encode(s);}
+function zipStore(files){
+  var locals=[],centrals=[],offset=0;
+  files.forEach(function(f){
+    var name=utf8(f.name),data=(f.data instanceof Uint8Array)?f.data:utf8(f.data),crc=crc32(data);
+    var local=new Uint8Array([].concat(
+      u32(0x04034b50),u16(20),u16(0),u16(0),u16(0),u16(0),u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0)
+    ));
+    locals.push(local,name,data);
+    var central=new Uint8Array([].concat(
+      u32(0x02014b50),u16(20),u16(20),u16(0),u16(0),u16(0),u16(0),u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(offset)
+    ));
+    centrals.push(central,name);
+    offset+=local.length+name.length+data.length;
+  });
+  var centralBytes=concatBytes(centrals), localBytes=concatBytes(locals);
+  var end=new Uint8Array([].concat(
+    u32(0x06054b50),u16(0),u16(0),u16(files.length),u16(files.length),u32(centralBytes.length),u32(localBytes.length),u16(0)
+  ));
+  return concatBytes([localBytes,centralBytes,end]);
+}
+function buildXLSX(){
+  var rows=[
+    ["Notdienst Asyl"],
+    [],
+    ["KW","Objekt","Straße","Datum","Von","Bis","Monteur","Pers.-Nr.","Melder","Std.","Schadensmeldung"]
+  ];
+  entries.forEach(function(e){
+    rows.push([e.kw,e.objekt,e.strasse,formatDateDE(e.datum),e.von,e.bis,e.monteur,e.persnr,e.melder||"",Number(String(e.std).replace(",",".")),e.schaden]);
+  });
+  var rowXml=[];
+  rows.forEach(function(row,ri){
+    var cells=[];
+    row.forEach(function(v,ci){
+      if(v===undefined||v===null||v==="")return;
+      var ref=colName(ci+1)+(ri+1);
+      if(typeof v==="number" && isFinite(v)) cells.push('<c r="'+ref+'"><v>'+v+'</v></c>');
+      else cells.push('<c r="'+ref+'" t="inlineStr"><is><t xml:space="preserve">'+xmlEscape(v)+'</t></is></c>');
+    });
+    rowXml.push('<row r="'+(ri+1)+'">'+cells.join('')+'</row>');
+  });
+  var sheet='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+    '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'+
+    '<cols><col min="1" max="1" width="8" customWidth="1"/><col min="2" max="2" width="10" customWidth="1"/><col min="3" max="3" width="28" customWidth="1"/><col min="4" max="4" width="12" customWidth="1"/><col min="5" max="6" width="9" customWidth="1"/><col min="7" max="7" width="20" customWidth="1"/><col min="8" max="10" width="14" customWidth="1"/><col min="11" max="11" width="45" customWidth="1"/></cols>'+
+    '<sheetData>'+rowXml.join('')+'</sheetData><mergeCells count="1"><mergeCell ref="A1:K1"/></mergeCells></worksheet>';
+  var files=[
+    {name:'[Content_Types].xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>'},
+    {name:'_rels/.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'},
+    {name:'xl/workbook.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Notdienst" sheetId="1" r:id="rId1"/></sheets></workbook>'},
+    {name:'xl/_rels/workbook.xml.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'},
+    {name:'xl/styles.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="1"><font><sz val="11"/><name val="Calibri"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border/></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>'},
+    {name:'xl/worksheets/sheet1.xml',data:sheet}
+  ];
+  return zipStore(files);
+}
+async function exportXLSX(){
+  if(entries.length===0){alert("Keine Einträge vorhanden.");return}
+  try{
+    var bytes=buildXLSX();
+    var name="Notdienst_Asyl_KW"+safeName(entries[0].kw)+"_"+safeName(entries[0].monteur)+".xlsx";
+    var file=new File([bytes],name,{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file],title:"Notdienst Asyl Excel"});
+      return;
+    }
+    var url=URL.createObjectURL(file),a=document.createElement("a");
+    a.href=url;a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(url);},2000);
+  }catch(e){
+    console.error(e);
+    alert("Excel-Datei konnte nicht erstellt werden. Bitte CSV verwenden oder die App neu laden.");
+  }
+}
+
+function csvCell(value){
+  return '"' + String(value == null ? "" : value).replace(/"/g,'""') + '"';
+}
+
+function exportCSV(){
+  if(entries.length===0){alert("Keine Einträge vorhanden.");return}
+
+  var rows = [
+    ["KW","Objekt","Straße","Datum","Von","Bis","Monteur","Pers.-Nr.","Melder","Std.","Schadensmeldung"]
+  ];
+
+  entries.forEach(function(e){
+    rows.push([e.kw,e.objekt,e.strasse,formatDateDE(e.datum),e.von,e.bis,e.monteur,e.persnr,e.melder||"",e.std,e.schaden]);
+  });
+
+  var csv = "\uFEFF" + rows.map(function(row){
+    return row.map(csvCell).join(";");
+  }).join("\r\n");
+
+  var blob = new Blob([csv],{type:"text/csv;charset=utf-8"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "Notdienst_Asyl_KW"+safeName(entries[0].kw)+"_"+safeName(entries[0].monteur)+".csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(a.href);},1000);
+}
+
+
+function exportBackup(){
+  var backup={appId:"notdienst-asyl",app:"Notdienst Asyl",formatVersion:2,createdAt:new Date().toISOString(),entries:entries,employees:employees};
+  var blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json;charset=utf-8"});
+  var a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  var d=new Date(),stamp=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  a.download="Notdienst_Datensicherung_"+stamp+".notdienstbackup.json";
+  document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(a.href);},1000);
+  alert("Notdienst-Sicherung erstellt. Sie enthält nur Notdienst-Daten und lokal angelegte Notdienst-Mitarbeiter.");
+}
+function importBackup(event){
+  var file=event.target.files&&event.target.files[0]; if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(){
+    try{
+      var b=JSON.parse(reader.result);
+      var current=b&&b.appId==="notdienst-asyl"&&b.formatVersion===2;
+      var legacy=b&&b.app==="Notdienst Asyl"&&Array.isArray(b.entries);
+      if(!current&&!legacy)throw new Error("wrong app");
+      if(!Array.isArray(b.entries))throw new Error("invalid");
+      if(!confirm("Notdienst-Datensicherung wiederherstellen? Dabei werden nur die Daten der Notdienst-App ersetzt. Schadensmeldungs-Daten bleiben unberührt."))return;
+      entries=b.entries; employees=Array.isArray(b.employees)?b.employees:employees;
+      saveEntries();saveEmployees();renderEmployees();render();alert("Notdienst-Datensicherung wiederhergestellt.");
+    }catch(e){alert("Diese Datei ist keine gültige Notdienst-Datensicherung. Schadensmeldungs- oder fremde Sicherungen werden nicht importiert.");}
+    event.target.value="";
+  };
+  reader.readAsText(file);
+}
+
+function clearEntries(){
+  if(confirm("Wirklich alle gespeicherten Einträge auf diesem Gerät löschen?")){
+    entries=[];
+    editIndex=-1;
+    saveEntries();
+    render();
+  }
+}
+</script>
+</body>
+</html>

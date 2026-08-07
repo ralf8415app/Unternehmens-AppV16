@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; font-src 'self' data:; media-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'none'; worker-src 'self'; manifest-src 'self'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Schadenmeldung">
+<meta name="theme-color" content="#123c5a">
+<link rel="manifest" href="manifest.json">
+<title>Schaden- & Auftragsmeldung – Edge V14</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;margin:0;background:#eef1f4;color:#111}
+header{background:#123c5a;color:#fff;padding:15px 12px;text-align:center;font-size:22px;font-weight:800;position:sticky;top:0;z-index:5}
+main{max-width:1180px;margin:auto;padding:12px}
+.card{background:#fff;border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 2px 8px #0002}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+label{font-weight:750;font-size:14px;display:block;margin-bottom:5px}
+input,select,textarea,button{font:inherit;font-size:16px;width:100%;padding:11px;border-radius:10px;border:1px solid #b8bec4;background:#fff}
+textarea{min-height:110px;resize:vertical}
+button{border:0;background:#123c5a;color:#fff;font-weight:800;cursor:pointer}
+button.green{background:#1b6e3c}button.red{background:#9b1d1d}button.grey{background:#666}button.orange{background:#a85b00}
+button.small{width:auto;padding:7px 9px;font-size:13px;margin:2px}
+.req{color:#b00020}.error{border:2px solid #b00020!important;background:#fff0f0!important}
+.note{font-size:14px;color:#41464b;line-height:1.45}.muted{color:#667;font-size:13px}
+.badge{display:inline-block;padding:3px 8px;border-radius:999px;background:#e7eef4;font-size:12px;font-weight:700}
+.preview{white-space:pre-wrap;background:#f5f7f9;border:1px solid #ccd3d9;border-radius:10px;padding:12px;min-height:120px;line-height:1.45}
+.photoGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px;margin-top:10px}.photoItem{border:1px solid #ccd3d9;border-radius:10px;padding:7px;background:#f8fafb}.photoItem img{width:100%;height:120px;object-fit:cover;border-radius:7px;display:block}.photoItem button{margin-top:6px;padding:7px;font-size:13px}.privacyBox{background:#edf7ef;border:1px solid #9bc7a5;border-radius:10px;padding:11px;line-height:1.45}.photoCount{font-weight:800}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap}.toolbar button{width:auto;min-width:150px;flex:1}
+.tableWrap{overflow:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:13px;min-width:1050px}
+th,td{border:1px solid #c5cbd0;padding:7px;vertical-align:top}th{background:#dfeaf2;position:sticky;top:0}
+hr{border:0;border-top:1px solid #e1e4e8;margin:18px 0}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){.grid,.grid2{grid-template-columns:1fr}.toolbar{display:grid;grid-template-columns:1fr}.toolbar button{width:100%}}
+@media print{header,.noPrint,button,input,select,textarea,label,.note{display:none!important}body{background:#fff}.card{box-shadow:none}.tableWrap{overflow:visible}table{min-width:0;font-size:10px}}
+.appNav{max-width:1150px;margin:12px auto 0;padding:0 14px;display:flex;gap:8px;flex-wrap:wrap}.appNav button{width:auto;padding:10px 16px;background:#555}.helpOverlay{display:none;position:fixed;inset:0;background:#0008;z-index:50;padding:20px;overflow:auto}.helpBox{max-width:900px;margin:30px auto;background:white;border-radius:16px;padding:22px;box-shadow:0 8px 30px #0005}.helpBox h2{margin-top:0;color:#123c5a}.helpBox h3{margin-bottom:5px}.helpBox p,.helpBox li{line-height:1.5}.helpBox .lang{border-top:2px solid #dde3e8;margin-top:22px;padding-top:18px}.helpBox button{margin-top:14px}
+</style>
+</head>
+<body>
+<div id="storageStatus" style="background:#fff3cd;border:1px solid #d6b85b;padding:12px 14px;margin:10px;border-radius:10px;font:600 15px Arial,sans-serif;line-height:1.35">Speichertest läuft …</div>
+
+<header>Schaden- & Auftragsmeldung</header>
+<div class="appNav noPrint"><button onclick="location.href='notdienst.html'">Notdienst-App öffnen →</button><button onclick="openHelp()">📘 App-Anleitung DE / EN</button></div>
+<div id="transferNotice" class="note noPrint" style="display:none;margin:12px auto;max-width:1100px;padding:12px 16px;background:#fff3cd;border:1px solid #e6c75b;border-radius:10px"><b>Vom Notdienst übernommen:</b> Angaben wurden in dieses Formular übertragen. Bitte Schadensort, Gewerk und Priorität ergänzen.</div>
+<main>
+<section class="card noPrint">
+<h2>Neue Meldung</h2>
+<div class="privacyBox"><b>Datenschutz / lokale Speicherung:</b> Die App sendet eingegebene Aufträge, Namen, E-Mail-Einstellungen und Fotos nicht an den Hosting-Server. Diese Nutzdaten werden – sofern Edge-Speicher durch die Unternehmensrichtlinie erlaubt ist – lokal im Browser dieses Geräts gespeichert. Beim Aufruf einer auf GitHub Pages veröffentlichten App verarbeitet GitHub jedoch technisch notwendige Verbindungsdaten; GitHub dokumentiert insbesondere die Protokollierung der IP-Adresse von Seitenbesuchern. Das Löschen der Edge-Websitedaten kann die lokal gespeicherten App-Daten entfernen.</div><p class="note"><b>iPad:</b> „Speichern & E‑Mail öffnen“ legt den Auftrag zuerst lokal ab und öffnet anschließend die Mail-App mit fertigem Betreff und Meldetext.</p>
+
+<div class="grid">
+<div><label>Datum <span class="req">*</span></label><input id="datum" type="date" onchange="setKW()"></div>
+<div><label>KW</label><input id="kw" readonly></div>
+<div><label>Mitarbeiter <span class="req">*</span></label>
+<select id="mitarbeiter" onchange="setRole()"><option value="">Bitte lokal anlegen</option></select></div>
+<div><label>Rolle</label><input id="rolle" readonly></div>
+<div><label>Melder <span class="req">*</span></label>
+<select id="melder"><option value="">Bitte auswählen</option><option>Telog</option><option>Wachdienst</option><option>Betreuung</option><option>Bewohner</option><option>Hausmeister</option><option>Sonstige</option></select></div>
+<div><label>Priorität <span class="req">*</span></label>
+<select id="prioritaet"><option value="">Bitte auswählen</option><option>Normal</option><option>Dringend</option><option>Sofort / Gefahr im Verzug</option></select></div>
+<div><label>Gewerk <span class="req">*</span></label>
+<select id="gewerk" onchange="loadTradeTemplates()">
+<option value="">Bitte auswählen</option><option>Schreiner / Türen</option><option>Fensterbau</option><option>Schlüsseldienst</option><option>Leckortung</option><option>Sanitär</option><option>Heizung</option><option>Elektrik</option><option>Brandschutz / BMZ</option><option>Metallbau</option><option>Kanalreinigung</option><option>Schädlingsbekämpfung</option><option>Reinigung</option><option>Garten- und Landschaftsbau</option><option>Entrümpelung</option><option>Wartungsvertrag</option><option>Wartung</option><option>Sonstiges</option>
+</select></div>
+<div><label>Status</label><select id="status"><option>Offen</option><option>Beauftragt</option><option>In Bearbeitung</option><option>Erledigt</option></select></div>
+</div>
+
+<br>
+<div class="grid2">
+<div><label>Objekt / Straße <span class="req">*</span></label>
+<select id="objekt">
+<option value="">Bitte auswählen</option>
+<option value="4003|Bretzenheimer Str.">4003 – Bretzenheimer Str.</option><option value="4007|Alte Ziegelei">4007 – Alte Ziegelei</option><option value="4008|Ludwigsb. Str.">4008 – Ludwigsb. Str.</option><option value="4009|Zwerchallee 14/16">4009 – Zwerchallee 14/16</option><option value="4010|Wilh.-Quetsch">4010 – Wilh.-Quetsch</option><option value="4011|Wormser Straße 187">4011 – Wormser Straße 187</option><option value="4013|Zwerchallee 8–12 und 18–20">4013 – Zwerchallee 8–12 und 18–20</option><option value="4014|Housing Area">4014 – Housing Area</option><option value="4020|Allianzhaus">4020 – Allianzhaus</option><option value="4024|Hotel Alt Finthen">4024 – Hotel Alt Finthen</option><option value="4025|Hotel Draiser Hof">4025 – Hotel Draiser Hof</option><option value="4026|Heiligkreuzweg">4026 – Heiligkreuzweg</option><option value="4027|Hechtsheimer Str.">4027 – Hechtsheimer Str.</option><option value="4028|Isaac-Fulda">4028 – Isaac-Fulda</option><option value="4029|Layenhof">4029 – Layenhof</option><option value="4030|Bahnhofstr.">4030 – Bahnhofstr.</option><option value="4031|Nikolaus-Kopernikus">4031 – Nikolaus-Kopernikus</option><option value="4032|Zitadelle">4032 – Zitadelle</option><option value="4033|Layenhof 2">4033 – Layenhof 2</option>
+</select></div>
+<div><label>Schadensort <span class="req">*</span></label><input id="schadensort" placeholder="z. B. Haus 2, 1. OG, Wohnung 14, Bad"></div>
+</div>
+
+<br>
+<div><label>Vorgefertigter Text</label><select id="baustein" onchange="insertBlock()"><option value="">Erst Gewerk auswählen</option></select></div>
+<br>
+<label>Schadensbeschreibung / Auftrag <span class="req">*</span></label>
+<textarea id="schaden" placeholder="Schaden beschreiben oder Textbaustein auswählen …" oninput="updatePreview()"></textarea>
+
+<div class="privacyBox" style="margin-top:14px">
+  <label style="display:flex;gap:10px;align-items:center"><input id="versicherung" type="checkbox" onchange="toggleInsurance();updatePreview()" style="width:auto"> <b>Versicherungsschaden</b></label>
+  <div id="insuranceFields" style="display:none;margin-top:10px">
+    <label>Freie Ergänzung für die Versicherung</label>
+    <textarea id="versicherungText" placeholder="z. B. sichtbarer Wasserschaden, betroffene Bauteile, erste Feststellungen …" oninput="updatePreview()"></textarea>
+    <p class="muted">Fester Abschlusstext: Schadensursache feststellen. Schaden gegebenenfalls beheben und Folgeschäden beseitigen. Sämtliche Feststellungen und ausgeführten Arbeiten für die Versicherung nachvollziehbar dokumentieren.</p>
+  </div>
+</div>
+
+<hr>
+<h3>Eigene Textbausteine für dieses Gewerk</h3>
+<p class="note">Eigene Bausteine werden nur in der Schadensmeldungs-App auf diesem Gerät gespeichert. Sie können separat exportiert und später als geprüfte Standard-Bausteine in eine neue App-Version übernommen werden.</p>
+<div class="grid2">
+  <div><label>Kurzbezeichnung</label><input id="customTitle" placeholder="z. B. Kakerlakenbekämpfung"></div>
+  <div><label>Gewerk</label><input id="customTrade" readonly placeholder="Gewerk oben auswählen"></div>
+</div>
+<br><label>Eigener Auftragstext</label>
+<textarea id="customText" placeholder="Eigenen Textbaustein eingeben …"></textarea>
+<br><div class="toolbar">
+  <button class="grey" type="button" onclick="saveCustomTemplate()">Baustein lokal speichern</button>
+  <button class="red" type="button" onclick="deleteSelectedCustomTemplate()">Ausgewählten eigenen Baustein löschen</button>
+  <button class="orange" type="button" onclick="exportCustomTemplates()">Eigene Bausteine exportieren</button>
+</div>
+
+<hr>
+<h3>Fotos zum Schaden <span id="photoCount" class="badge">0</span></h3>
+<p class="note">Fotos werden beim Auswählen verkleinert und <b>nur lokal auf diesem Gerät</b> gespeichert. Sie werden nicht auf GitHub übertragen.</p>
+<input id="photoInput" type="file" accept="image/*" capture="environment" multiple onchange="addPhotos(event)">
+<div id="photoGrid" class="photoGrid"></div>
+<br><div class="toolbar"><button class="grey" type="button" onclick="shareCurrentPhotos()">Fotos teilen / an Mail anhängen</button><button class="red" type="button" onclick="clearCurrentPhotos()">Fotos dieser Meldung entfernen</button></div>
+<p class="muted">Technischer Hinweis: Ein normaler „mailto:“ Link kann im Browser keine Dateianhänge setzen. Für Fotos verwendet die App – soweit vom Browser bzw. der Unternehmensrichtlinie erlaubt – das Teilen-Menü. Unter Windows kann alternativ ein Dateidownload verwendet werden.</p>
+<hr>
+<h3>Mitarbeiter lokal verwalten</h3>
+<p class="note">Personennamen werden ausschließlich auf diesem Gerät gespeichert und stehen nicht im GitHub-Code.</p>
+<div class="grid2"><div><input id="employeeName" placeholder="Name"></div><div><select id="employeeRole"><option>Hausmeister</option><option>Springer</option><option>Teamleitung</option><option>Sonstige</option></select></div></div>
+<br><div class="toolbar"><button class="grey" type="button" onclick="saveEmployee()">Mitarbeiter lokal speichern</button><button class="red" type="button" onclick="deleteEmployee()">Ausgewählten Mitarbeiter löschen</button></div>
+
+<hr>
+<h3>E-Mail</h3>
+<div class="grid2">
+<div><label>Empfänger</label><input id="mailTo" type="email" placeholder="z. B. auftraege@firma.de" oninput="saveSettings()"></div>
+<div><label>CC (optional)</label><input id="mailCc" type="email" placeholder="optional" oninput="saveSettings()"></div>
+</div>
+<p class="muted">Die Empfängeradressen werden ebenfalls nur lokal auf diesem Gerät gespeichert.</p>
+<label>Vorschau des Meldetextes</label>
+<div id="preview" class="preview"></div>
+<br>
+<div class="toolbar">
+<button onclick="saveOnly()">Meldung speichern</button>
+<button class="green" onclick="saveAndMail()">Speichern & E-Mail öffnen</button>
+<button class="orange" onclick="copyMailText()">Meldetext kopieren</button>
+<button class="grey" onclick="resetForm()">Neue Meldung / Formular leeren</button>
+</div>
+</section>
+
+<section class="card">
+<h2>Gespeicherte Auftragsmeldungen <span id="count" class="badge"></span></h2>
+<div class="noPrint grid2"><input id="search" placeholder="Suchen: Objekt, Gewerk, Text …" oninput="render()"><select id="statusFilter" onchange="render()"><option value="">Alle Status</option><option>Offen</option><option>Beauftragt</option><option>In Bearbeitung</option><option>Erledigt</option></select></div><br>
+<div class="tableWrap"><table id="tbl"><thead><tr><th>Datum</th><th>Objekt</th><th>Schadensort</th><th>Gewerk</th><th>Priorität</th><th>Melder</th><th>Auftrag</th><th>Fotos</th><th>Status</th><th>Mitarbeiter</th><th class="noPrint">Aktion</th></tr></thead><tbody></tbody></table></div>
+<br>
+<div class="privacyBox noPrint"><b>Offline & lokale Nutzdaten:</b> Nach einem erfolgreichen vollständigen Laden werden die App-Dateien per Service Worker für die Offline-Nutzung zwischengespeichert. Aufträge, Mitarbeiterdaten, E-Mail-Einstellungen und Fotos werden nicht an den Hosting-Server übertragen, sondern – soweit die Unternehmensrichtlinie es zulässt – lokal im Browser gespeichert. Die App enthält keine Analyse-Dienste und keine externen Inhaltsbibliotheken. Beim erstmaligen Laden bzw. bei Updates benötigt sie eine Verbindung zum Hosting-Server; beim Versand einer E-Mail werden die bewusst ausgewählten Inhalte an den verwendeten Maildienst übergeben.<br><br><b>Schadensmeldungs-Sicherung:</b> Die Backup-Datei enthält ausschließlich Daten dieser Schadensmeldungs-App: Aufträge, lokale Mitarbeiter, E-Mail-Einstellungen, eigene Textbausteine und gespeicherte Fotos. Bewahre sie geschützt auf; die Sicherungsdatei ist nicht zusätzlich verschlüsselt.</div>
+<br><div class="toolbar noPrint">
+<button class="green" onclick="exportFullBackup()">Schadensmeldung sichern</button>
+<button class="orange" onclick="document.getElementById('backupInput').click()">Schadensmeldung wiederherstellen</button>
+<input id="backupInput" type="file" accept="application/json,.json,.schadenbackup" style="display:none" onchange="importFullBackup(event)">
+<button class="grey" onclick="exportCSV()">CSV ohne Fotos</button>
+<button class="grey" onclick="window.print()">Drucken / PDF</button>
+<button class="red" onclick="clearEntries()">Alle Aufträge löschen</button>
+</div>
+</section>
+<section class="card noPrint" id="rechtliches">
+<h2>Über diese App / Rechtliches</h2>
+<div class="privacyBox"><b>© 2026 Ralf Peter Jung – Alle Rechte vorbehalten.</b><br><br>Diese App ist für die Erfassung und Bearbeitung von Schaden- und Auftragsmeldungen vorgesehen. Eine unerlaubte Vervielfältigung, Weitergabe, Veröffentlichung oder Veränderung der App bzw. ihrer individuellen Inhalte ist nicht gestattet, soweit keine entsprechende Erlaubnis vorliegt.<br><br><b>Datenschutz:</b> Personenbezogene Nutzdaten werden von der App nicht an den Hosting-Server übertragen. Lokale Speicherung erfolgt nur, soweit Browser und Unternehmensrichtlinie dies zulassen. Backup-Dateien sind unverschlüsselte Exportdateien und müssen organisatorisch geschützt abgelegt werden. Beim Laden der Web-App verarbeitet der Hosting-Anbieter technisch notwendige Verbindungsdaten; beim E-Mail-Versand verarbeitet der eingesetzte Maildienst die ausgewählten Inhalte. Verantwortlicher, Rechtsgrundlage, Aufbewahrungsfristen, Berechtigungen und weitere technische/organisatorische Maßnahmen sind vom betreibenden Unternehmen festzulegen.<br><br><b>Version:</b> V16 – Edge Unternehmen / zweisprachige Komplettanleitung</div>
+</section>
+</main>
+
+<div id="helpOverlay" class="helpOverlay noPrint" onclick="if(event.target===this)closeHelp()">
+<div class="helpBox">
+<h2>Komplette App-Anleitung – Schaden- & Auftragsmeldung</h2>
+<p><b>Wichtig für Firmen-Geräte:</b> Ob dauerhafte lokale Speicherung, Kamera, Teilen, Downloads oder das Hinzufügen zum Home-Bildschirm verfügbar sind, kann durch die Unternehmensverwaltung eingeschränkt sein. Der Speicherstatus oben in der App zeigt, ob lokale Speicherung möglich ist.</p>
+<h3>1. Öffnen / Installieren</h3>
+<p><b>iPad/iPhone mit Microsoft Edge:</b> App-Adresse in Edge öffnen. Über das Teilen- bzw. Browsermenü „Zum Home-Bildschirm“ / „Add to Home Screen“ wählen, sofern diese Option auf dem verwalteten Gerät angeboten wird. Fehlt sie, die App direkt als Favorit/Lesezeichen in Edge verwenden. Für den ersten vollständigen Ladevorgang und für Updates ist Internet erforderlich.</p>
+<p><b>Windows mit Microsoft Edge:</b> App-Adresse öffnen. Wenn Edge die Installation anbietet, das App-Symbol in der Adressleiste verwenden. Alternativ: Menü (…) → Apps → Diese Website als App installieren. Danach kann die App über Startmenü, Taskleiste oder Desktop-Verknüpfung geöffnet werden.</p>
+<h3>2. Erster Start und Mitarbeiter</h3>
+<p>Speicherstatus prüfen. Unter „Mitarbeiter lokal verwalten“ Name und Rolle eingeben und „Mitarbeiter lokal speichern“ wählen. Namen sind nicht fest im Programm hinterlegt. Bei erlaubtem Edge-Speicher bleibt der Eintrag auf diesem Gerät erhalten.</p>
+<h3>3. Schaden/Auftrag erfassen</h3>
+<p>Datum, Mitarbeiter, Melder, Priorität, Gewerk, Objekt/Straße und Schadensort auswählen bzw. eingeben. Danach einen vorhandenen Textbaustein wählen oder den Auftrag frei schreiben. Pflichtfelder sind mit * gekennzeichnet.</p>
+<h3>4. Eigene Textbausteine</h3>
+<p>Gewerk auswählen, Kurzbezeichnung und eigenen Auftragstext eingeben und „Baustein lokal speichern“ wählen. Diese Bausteine gelten nur auf diesem Gerät. „Eigene Bausteine exportieren“ erzeugt eine separate Datei nur mit den eigenen Bausteinen; sie kann später zur Prüfung und Übernahme in eine neue allgemeine App-Version verwendet werden.</p>
+<h3>5. Versicherungsschaden</h3>
+<p>„Versicherungsschaden“ aktivieren und bei Bedarf eine freie Ergänzung eingeben. Die App ergänzt automatisch den festen Dokumentationsauftrag zur Ermittlung der Schadensursache, gegebenenfalls zur Behebung des Schadens und der Folgeschäden sowie zur nachvollziehbaren Dokumentation für die Versicherung.</p>
+<h3>6. Fotos</h3>
+<p>Über die Fotoauswahl Kamera oder vorhandene Bilder verwenden. Fotos werden verkleinert und – wenn Edge/Unternehmensrichtlinie IndexedDB zulässt – lokal gespeichert. „Fotos teilen / an Mail anhängen“ nutzt das System-Teilen, soweit freigegeben. Ein normaler E-Mail-Link kann Browser-Dateien nicht automatisch als Anhang setzen.</p>
+<h3>7. Speichern und E-Mail</h3>
+<p>„Meldung speichern“ speichert den Auftrag lokal. „Speichern & E-Mail öffnen“ speichert zuerst und öffnet anschließend die konfigurierte Mail-App mit Betreff und Meldetext. Empfänger und CC können lokal gespeichert werden. „Meldetext kopieren“ kopiert nur den Text.</p>
+<h3>8. Gespeicherte Meldungen</h3>
+<p>Unten können Meldungen gesucht, nach Status gefiltert, bearbeitet, erneut per Mail vorbereitet, Fotos geteilt oder einzelne Meldungen gelöscht werden. „Alle Aufträge löschen“ entfernt alle Schadensmeldungen und zugehörigen lokal gespeicherten Fotos.</p>
+<h3>9. Datensicherung – Schadensmeldung</h3>
+<p>„Schadensmeldung sichern“ erstellt ausschließlich ein Backup dieser Schadensmeldungs-App: Aufträge, lokale Mitarbeiter, E-Mail-Einstellungen, eigene Bausteine und gespeicherte Fotos. Die Notdienst-Daten gehören nicht in dieses Backup. Die Datei ist nicht zusätzlich verschlüsselt und muss in einem vom Unternehmen freigegebenen, geschützten Speicher abgelegt werden.</p>
+<h3>10. Backup wiederherstellen / Versionswechsel</h3>
+<p>Vor einem Update zuerst eine Sicherung erstellen. Neue Version öffnen und „Schadensmeldung wiederherstellen“ wählen. Nur eine passende Schadensmeldungs-Sicherung verwenden. Beim Wiederherstellen können vorhandene lokale Daten ersetzt werden; deshalb vorher zusätzlich sichern.</p>
+<h3>11. CSV, Drucken und PDF</h3>
+<p>„CSV ohne Fotos“ exportiert die tabellarischen Auftragsdaten ohne Bilddateien. „Drucken / PDF“ öffnet die Druckfunktion des Geräts; dort kann – soweit vom Betriebssystem angeboten – auch als PDF gespeichert werden.</p>
+<h3>12. Notdienst</h3>
+<p>„Notdienst-App öffnen“ wechselt in den getrennten Notdienst-Bereich. Dessen Daten und Backup bleiben getrennt. „Schaden beauftragen“ im Notdienst übernimmt die aktuelle Einsatzinformation in die Schadensmeldung; die Angaben danach kontrollieren und fehlende Pflichtfelder ergänzen.</p>
+<h3>13. Offline und Datenschutz</h3>
+<p>Nach einem erfolgreichen vollständigen Online-Laden werden die Programmdateien für Offline-Nutzung zwischengespeichert. Lokale Nutzdaten werden nicht automatisch an den Hosting-Server gesendet. Beim Aufruf der Website verarbeitet der Hosting-Anbieter jedoch technische Verbindungsdaten. E-Mail, Teilen und externe Speicherung übertragen nur die vom Benutzer bewusst ausgewählten Daten an den jeweiligen Dienst. Das Löschen von Edge-Websitedaten kann lokale App-Daten löschen.</p>
+
+<div class="lang">
+<h2>Complete App Guide – Damage & Work Order Reporting</h2>
+<p><b>Important for managed company devices:</b> Persistent local storage, camera access, sharing, downloads, or adding the app to the Home Screen may be restricted by company management policies. The storage status shown at the top of the app indicates whether local storage is available.</p>
+<h3>1. Open / install</h3>
+<p><b>iPad/iPhone with Microsoft Edge:</b> Open the app address in Edge. Use the Share/browser menu and select “Add to Home Screen” if that option is available on the managed device. If it is not available, use the app directly from an Edge favorite/bookmark. Internet access is required for the first complete load and for updates.</p>
+<p><b>Windows with Microsoft Edge:</b> Open the app address. If Edge offers installation, use the app icon in the address bar. Alternatively choose (…) → Apps → Install this site as an app. The app can then be opened from Start, the taskbar, or a desktop shortcut.</p>
+<h3>2. First start and employee</h3>
+<p>Check the storage status. Under “Mitarbeiter lokal verwalten”, enter the employee name and role and save it locally. Employee names are not hard-coded in the application. If Edge storage is permitted, the entry remains on this device.</p>
+<h3>3. Create a damage/work order</h3>
+<p>Select or enter date, employee, reporter, priority, trade, property/street and damage location. Then select a prepared text block or enter the work description manually. Fields marked * are mandatory.</p>
+<h3>4. Custom text blocks</h3>
+<p>Select a trade, enter a short title and work-order text, then save the block locally. Custom blocks exist only on this device. “Eigene Bausteine exportieren” exports only the custom blocks so they can later be reviewed and added to a future standard app version.</p>
+<h3>5. Insurance claim</h3>
+<p>Enable “Versicherungsschaden” and add free text if required. The app automatically adds the standard instruction to identify the cause, repair the damage where appropriate, remove consequential damage, and document findings and work for the insurer.</p>
+<h3>6. Photos</h3>
+<p>Use the photo control to take or select pictures. Images are reduced in size and, when Edge/company policy permits IndexedDB, stored locally. Photo sharing uses the system share function when available. A normal browser mail link cannot automatically attach local files.</p>
+<h3>7. Save and email</h3>
+<p>“Meldung speichern” stores the order locally. “Speichern & E-Mail öffnen” saves first and then opens the configured mail app with subject and message text. Recipient and CC settings can be stored locally. “Meldetext kopieren” copies the text only.</p>
+<h3>8. Stored reports</h3>
+<p>Stored reports can be searched, filtered by status, edited, prepared for email again, have their photos shared, or be deleted individually. “Alle Aufträge löschen” removes all damage reports and their locally stored photos.</p>
+<h3>9. Damage-app backup</h3>
+<p>“Schadensmeldung sichern” creates a backup only for the damage-reporting app: reports, local employees, email settings, custom text blocks and stored photos. Notdienst data is not included. The backup file is not additionally encrypted and must be stored in an approved protected company location.</p>
+<h3>10. Restore / version change</h3>
+<p>Create a backup before updating. Open the new version and choose “Schadensmeldung wiederherstellen”. Use only a matching damage-app backup. Restoring may replace current local data, so create an additional backup first.</p>
+<h3>11. CSV, print and PDF</h3>
+<p>“CSV ohne Fotos” exports tabular order data without images. “Drucken / PDF” opens the device print function; where supported by the operating system, the output can also be saved as PDF.</p>
+<h3>12. Notdienst</h3>
+<p>“Notdienst-App öffnen” opens the separate emergency-duty area. Its data and backup remain separate. “Schaden beauftragen” transfers the current emergency-duty information into the damage form; review the transferred data and complete any missing mandatory fields.</p>
+<h3>13. Offline use and privacy</h3>
+<p>After one successful complete online load, program files are cached for offline use. Local user data is not automatically sent to the hosting server. The hosting provider still processes technical connection data when the website is loaded. Email, sharing and external storage transfer only data deliberately selected by the user. Clearing Edge site data can remove locally stored app data.</p>
+</div>
+<button onclick="closeHelp()">Anleitung / Guide schließen</button>
+</div></div>
+
+<script>
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+function openHelp(){document.getElementById('helpOverlay').style.display='block';document.body.style.overflow='hidden';}
+function closeHelp(){document.getElementById('helpOverlay').style.display='none';document.body.style.overflow='';}
+const STORAGE_KEY='schaden_auftraege_v1';
+const SETTINGS_KEY='schaden_mail_settings_v1';
+const EMPLOYEE_KEY='schaden_mitarbeiter_lokal_v1';
+const CUSTOM_TEMPLATE_KEY='schaden_eigene_bausteine_v1';
+let entries=loadJSON(STORAGE_KEY,[]), employees=loadJSON(EMPLOYEE_KEY,[]), customTemplates=loadJSON(CUSTOM_TEMPLATE_KEY,[]), editIndex=-1;
+let currentPhotos=[]; // {id,name,type,blob,url?} nur im Arbeitsspeicher; dauerhaft in IndexedDB
+const PHOTO_DB='schaden_fotos_v1', PHOTO_STORE='photos';
+
+const tradeTemplates={
+'Schreiner / Türen':['Wohnungstür lässt sich nicht ordnungsgemäß öffnen bzw. schließen. Bitte prüfen und instand setzen.','Wohnungstür / Türblatt beschädigt. Bitte fachgerecht prüfen und instand setzen.','Türschloss bzw. Schließmechanismus defekt. Bitte prüfen und instand setzen.','Türschließer gang- und schließbar gemacht. Weitere fachliche Prüfung erforderlich.','Türzarge / Beschlag beschädigt. Bitte Reparatur veranlassen.'],
+'Fensterbau':['Fenster lässt sich nicht ordnungsgemäß öffnen bzw. schließen. Bitte prüfen und instand setzen.','Fenster gang- und schließbar gemacht. Weitere fachliche Prüfung erforderlich.','Fenstergriff / Beschlag defekt. Bitte prüfen und erneuern.','Fenster undicht; Zugluft bzw. Feuchtigkeit feststellbar. Bitte prüfen und abdichten.','Fensterscheibe beschädigt. Bitte sichern, ausmessen und Ersatz veranlassen.'],
+'Schlüsseldienst':['Bewohner hat sich ausgesperrt – Wohnungstür geöffnet.','Schließzylinder defekt bzw. nicht funktionsfähig. Bitte prüfen und austauschen.','Schlüssel im Zylinder abgebrochen. Bitte Reststück entfernen und Schließfunktion prüfen.'],
+'Leckortung':['Feuchtigkeit / Wasseraustritt festgestellt. Ursache ist derzeit nicht eindeutig feststellbar. Bitte Leckortung durchführen.','Verdacht auf verdeckten Leitungswasserschaden. Bitte zerstörungsarme Leckortung durchführen und Schadenstelle dokumentieren.','Wasserschaden im Bereich Wand / Decke / Boden. Bitte Ursache lokalisieren und erforderliche Folgemaßnahmen benennen.','Leckortungsfirma beauftragen. Zutritt zum betroffenen Bereich sicherstellen und Messergebnis dokumentieren.'],
+'Sanitär':['WC verstopft bzw. nicht ordnungsgemäß nutzbar. Bitte prüfen und instand setzen.','Siphon / Ablauf verstopft. Bitte reinigen und Dichtheit prüfen.','Armatur defekt bzw. undicht. Bitte prüfen und instand setzen bzw. erneuern.','Wasserleitung / Anschluss undicht. Bitte Ursache prüfen und Leckage beseitigen.','Spülkasten / WC-Spülung defekt. Bitte prüfen und instand setzen.'],
+'Heizung':['Heizkörper bleibt kalt bzw. wird nicht ausreichend warm. Bitte Heizungsfunktion prüfen.','Heizkörper entlüftet. Weitere Prüfung der Heizungsanlage erforderlich.','Heizungsanlage zeigt Störung. Bitte Fehler prüfen und Anlage instand setzen.'],
+'Elektrik':['FI-Schutzschalter ausgelöst. Ursache bitte fachgerecht prüfen.','FI-Schutzschalter wieder eingeschaltet. Anlage derzeit in Betrieb; Ursache der Auslösung bitte prüfen.','Steckdose / Schalter defekt bzw. beschädigt. Bitte spannungsfrei prüfen und instand setzen.','Beleuchtung ausgefallen. Leuchtmittel / Leuchte / Stromkreis bitte prüfen.','Elektrische Anlage weist eine Störung auf. Bitte Elektrofachkraft beauftragen.'],
+'Brandschutz / BMZ':['BMZ-Anlage zurückgesetzt – Fehler kurz beschreiben: ','Störung an Brandmeldeanlage festgestellt. Bitte Fachfirma mit Prüfung und Instandsetzung beauftragen.','Brandschutztür / Feststellanlage nicht ordnungsgemäß funktionsfähig. Bitte prüfen und instand setzen.'],
+'Metallbau':['Metallbauteil / Geländer / Tor beschädigt. Bitte Verkehrssicherheit prüfen und instand setzen.','Tür / Tor aus Metall nicht gang- bzw. schließbar. Bitte Beschläge und Schließmechanismus prüfen.'],
+'Kanalreinigung':['Abfluss / Grundleitung verstopft. Bitte Kanalreinigung durchführen.','Rückstau festgestellt. Bitte Leitungssystem prüfen, reinigen und Ursache dokumentieren.'],
+'Schädlingsbekämpfung':['Arbeiten gemäß bestehendem Wartungsvertrag durchführen.','Kakerlakenbefall prüfen und fachgerecht bekämpfen.','Schädlingsbefall prüfen und geeignete Bekämpfungsmaßnahmen durchführen.','Kontroll- und Nachbehandlung gemäß Wartungsvertrag durchführen.'],
+'Reinigung':['Sonderreinigung erforderlich. Betroffenen Bereich bitte fachgerecht reinigen und Zustand dokumentieren.'],
+'Garten- und Landschaftsbau':['Gefahrenstelle im Außenbereich festgestellt. Bitte prüfen und fachgerecht beseitigen.','Vegetation / Bewuchs beeinträchtigt Verkehrs- oder Fluchtweg. Bitte zurückschneiden.'],
+'Entrümpelung':['Entrümpelung nach Vorgabe des Betreuers durchführen.','Zimmer nach Vorgabe des Betreuers einrichten.','Sperrmüll / Gegenstände im Gemeinschafts- bzw. Fluchtwegbereich. Bitte räumen und ordnungsgemäß entsorgen.'],
+'Wartungsvertrag':['Wartungsvertrag prüfen und die vertraglich vereinbarte Wartung fristgerecht durchführen. Wartungsnachweis / Prüfprotokoll bitte übermitteln.','Wartung gemäß bestehendem Wartungsvertrag durchführen. Festgestellte Mängel bitte dokumentieren und erforderliche Instandsetzungsmaßnahmen gesondert mitteilen.'],
+'Wartung':['Wartung Brandschutztür: Brandschutztür einschließlich Beschläge, Schließfunktion, Türschließer und Dichtungen gemäß Herstellervorgaben prüfen und warten. Festgestellte Mängel dokumentieren.','Wartung BMZ-Anlage: Brandmeldeanlage gemäß Wartungsintervall und Herstellervorgaben prüfen und warten. Störungen und festgestellte Mängel dokumentieren.','Wartung Lüftungsanlage: Lüftungsanlage einschließlich Filter, Funktion und sichtbarer Anlagenteile prüfen und warten. Erforderlichen Filterwechsel und festgestellte Mängel dokumentieren.','Allgemeine Wartung: Anlage / Bauteil gemäß Herstellervorgaben und vereinbartem Wartungsumfang prüfen und warten. Festgestellte Mängel und erforderliche Instandsetzungen dokumentieren.','Wartung Schädlingsbekämpfung: Vereinbarte Kontroll- und Wartungsmaßnahmen durchführen. Befall, Köderstellen und erforderliche Folgemaßnahmen dokumentieren.','Wartung Feuerlöscher: Feuerlöscher gemäß vorgeschriebenem Prüf- und Wartungsintervall kontrollieren und warten. Prüfkennzeichnung aktualisieren und Mängel dokumentieren.','Instandsetzung Feuerlöscher: Beanstandeten bzw. nicht einsatzbereiten Feuerlöscher fachgerecht prüfen und instand setzen. Falls eine Instandsetzung nicht möglich oder wirtschaftlich ist, Austausch mitteilen bzw. veranlassen.'],
+'Sonstiges':['Unfallgefahr beseitigt. Weitere fachliche Prüfung erforderlich.','Kein Schaden feststellbar.','Weitere Arbeiten erforderlich. Bitte Fachfirma beauftragen.','Firma beauftragt – Name der Firma: ']
+};
+
+// Edge-Speichertest: dauerhafter Speicher, wenn die Unternehmensrichtlinie ihn zulässt; sonst Sitzungsmodus.
+const TRANSIENT_STORE=Object.create(null);
+let SESSION_PHOTOS=[];
+let LOCAL_STORAGE_OK=false;
+let INDEXED_DB_OK=false;
+function testLocalStorage(){
+  try{const k='__edge_storage_test__';localStorage.setItem(k,'1');const ok=localStorage.getItem(k)==='1';localStorage.removeItem(k);return ok}catch(e){return false}
+}
+LOCAL_STORAGE_OK=testLocalStorage();
+function loadJSON(key,fallback){
+  try{
+    if(LOCAL_STORAGE_OK){const raw=localStorage.getItem(key);return raw===null?fallback:JSON.parse(raw)}
+    return Object.prototype.hasOwnProperty.call(TRANSIENT_STORE,key)?JSON.parse(JSON.stringify(TRANSIENT_STORE[key])):fallback
+  }catch(e){return fallback}
+}
+function saveJSON(key,val){
+  try{
+    if(LOCAL_STORAGE_OK){localStorage.setItem(key,JSON.stringify(val));return true}
+    TRANSIENT_STORE[key]=JSON.parse(JSON.stringify(val));return true
+  }catch(e){return false}
+}
+function openPhotoDB(){return new Promise((resolve,reject)=>{try{if(!('indexedDB' in window))return reject(new Error('IndexedDB fehlt'));const r=indexedDB.open(PHOTO_DB,1);r.onupgradeneeded=()=>{const db=r.result;if(!db.objectStoreNames.contains(PHOTO_STORE)){const s=db.createObjectStore(PHOTO_STORE,{keyPath:'id'});s.createIndex('entryId','entryId',{unique:false})}};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)}catch(e){reject(e)}})}
+async function testIndexedDB(){try{const db=await openPhotoDB();db.close();INDEXED_DB_OK=true;return true}catch(e){INDEXED_DB_OK=false;return false}}
+async function idbRun(mode,fn){const db=await openPhotoDB();return new Promise((resolve,reject)=>{const tx=db.transaction(PHOTO_STORE,mode),s=tx.objectStore(PHOTO_STORE);let out;try{out=fn(s)}catch(e){db.close();reject(e);return}tx.oncomplete=()=>{db.close();resolve(out)};tx.onerror=()=>{db.close();reject(tx.error)}})}
+async function putPhoto(rec){if(INDEXED_DB_OK){await idbRun('readwrite',s=>s.put(rec));return}SESSION_PHOTOS=SESSION_PHOTOS.filter(x=>x.id!==rec.id);SESSION_PHOTOS.push(rec)}
+async function getPhotosForEntry(entryId){if(INDEXED_DB_OK){const db=await openPhotoDB();return new Promise((resolve,reject)=>{const tx=db.transaction(PHOTO_STORE,'readonly'),idx=tx.objectStore(PHOTO_STORE).index('entryId'),r=idx.getAll(entryId);r.onsuccess=()=>{db.close();resolve(r.result||[])};r.onerror=()=>{db.close();reject(r.error)}})}return SESSION_PHOTOS.filter(x=>x.entryId===entryId)}
+async function deletePhotoById(id){if(INDEXED_DB_OK){await idbRun('readwrite',s=>s.delete(id));return}SESSION_PHOTOS=SESSION_PHOTOS.filter(x=>x.id!==id)}
+async function deletePhotosForEntry(entryId){const rows=await getPhotosForEntry(entryId);for(const p of rows)await deletePhotoById(p.id)}
+async function countPhotosForEntry(entryId){return (await getPhotosForEntry(entryId)).length}
+async function getAllPhotos(){if(INDEXED_DB_OK){const db=await openPhotoDB();return new Promise((resolve,reject)=>{const tx=db.transaction(PHOTO_STORE,'readonly'),r=tx.objectStore(PHOTO_STORE).getAll();r.onsuccess=()=>{db.close();resolve(r.result||[])};r.onerror=()=>{db.close();reject(r.error)}})}return SESSION_PHOTOS.slice()}
+async function clearAllPhotos(){if(INDEXED_DB_OK){await idbRun('readwrite',s=>s.clear());return}SESSION_PHOTOS=[]}
+function updateStorageStatus(){const el=document.getElementById('storageStatus');if(!el)return;const persistent=LOCAL_STORAGE_OK&&INDEXED_DB_OK;if(persistent){el.style.background='#e7f6ec';el.style.borderColor='#75b987';el.innerHTML='<b>Edge-Speichertest: OK.</b> Namen, Einstellungen, Aufträge und Fotos können auf diesem Gerät dauerhaft lokal gespeichert werden.'}else if(LOCAL_STORAGE_OK){el.style.background='#fff3cd';el.style.borderColor='#d6b85b';el.innerHTML='<b>Edge-Speichertest: teilweise verfügbar.</b> Namen, Einstellungen und Aufträge werden dauerhaft gespeichert; Fotos bleiben nur für die aktuelle Sitzung verfügbar.'}else{el.style.background='#fde8e8';el.style.borderColor='#d88';el.innerHTML='<b>Edge-Speichertest: durch Richtlinie blockiert.</b> Daten bleiben nur erhalten, solange diese Seite geöffnet ist. Vor dem Schließen exportieren oder versenden.'}}
+function blobToDataURL(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(blob)})}
+function dataURLToBlob(dataURL){const parts=String(dataURL||'').split(',');if(parts.length<2)throw new Error('Ungültige Bilddaten');const m=/data:([^;]+);base64/.exec(parts[0]);const type=m?m[1]:'application/octet-stream';const bin=atob(parts[1]);const arr=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);return new Blob([arr],{type})}
+async function exportFullBackup(){try{saveSettings();const photos=await getAllPhotos();const photoExport=[];for(const p of photos){photoExport.push({id:p.id,entryId:p.entryId,name:p.name,type:p.type,createdAt:p.createdAt||null,data:await blobToDataURL(p.blob)})}const backup={appId:'schadenmeldung-edge',app:'Schadenmeldung Edge Unternehmen',formatVersion:2,createdAt:new Date().toISOString(),entries,employees,settings:loadJSON(SETTINGS_KEY,{}),customTemplates,photos:photoExport};const blob=new Blob([JSON.stringify(backup)],{type:'application/json;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Schadenmeldung_Datensicherung_'+new Date().toISOString().slice(0,10)+'.schadenbackup.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500);alert('Schadensmeldungs-Sicherung erstellt. Sie enthält nur Daten dieser App – keine Notdienst-Daten.')}catch(err){console.error(err);alert('Die Schadensmeldungs-Sicherung konnte nicht erstellt werden. Prüfe den freien Speicherplatz auf dem Gerät.')}}
+async function importFullBackup(ev){const input=ev.target,file=input.files&&input.files[0];input.value='';if(!file)return;let backup;try{backup=JSON.parse(await file.text())}catch(err){alert('Die ausgewählte Datei ist keine gültige Sicherungsdatei.');return}const legacy=backup&&backup.app==='Schadenmeldung Edge Unternehmen'&&backup.formatVersion===1;const current=backup&&backup.appId==='schadenmeldung-edge'&&backup.formatVersion===2;if(!legacy&&!current){alert('Diese Datei ist keine Schadensmeldungs-Sicherung. Notdienst- oder fremde Sicherungen werden nicht importiert.');return}if(!Array.isArray(backup.entries)||!Array.isArray(backup.photos)){alert('Die Sicherungsdatei ist unvollständig oder beschädigt.');return}const msg='Schadensmeldungs-Sicherung vom '+(backup.createdAt?new Date(backup.createdAt).toLocaleString('de-DE'):'unbekannten Datum')+' wiederherstellen?\n\nDabei werden nur die Daten der Schadensmeldungs-App ersetzt. Notdienst-Daten bleiben unberührt.';if(!confirm(msg))return;try{await clearAllPhotos();entries=backup.entries||[];employees=Array.isArray(backup.employees)?backup.employees:[];customTemplates=Array.isArray(backup.customTemplates)?backup.customTemplates:[];saveJSON(STORAGE_KEY,entries);saveJSON(EMPLOYEE_KEY,employees);saveJSON(CUSTOM_TEMPLATE_KEY,customTemplates);saveJSON(SETTINGS_KEY,backup.settings||{});for(const p of backup.photos){if(!p||!p.id||!p.entryId||!p.data)continue;await putPhoto({id:p.id,entryId:p.entryId,name:p.name||'Schadenfoto.jpg',type:p.type||'image/jpeg',createdAt:p.createdAt||Date.now(),blob:dataURLToBlob(p.data)})}currentPhotos=[];editIndex=-1;loadSettings();renderEmployees();renderCurrentPhotos();resetForm(false);await render();alert('Schadensmeldungs-Sicherung wiederhergestellt: '+entries.length+' Aufträge, '+customTemplates.length+' eigene Bausteine und '+backup.photos.length+' Fotos.')}catch(err){console.error(err);alert('Die Wiederherstellung ist fehlgeschlagen. Die Sicherungsdatei wurde möglicherweise beschädigt oder der lokale Speicher reicht nicht aus.')}}
+function uid(){return Date.now().toString(36)+'_'+Math.random().toString(36).slice(2)}
+function blobToImage(blob){return new Promise((resolve,reject)=>{const u=URL.createObjectURL(blob),im=new Image();im.onload=()=>{URL.revokeObjectURL(u);resolve(im)};im.onerror=e=>{URL.revokeObjectURL(u);reject(e)};im.src=u})}
+async function compressImage(file){const img=await blobToImage(file);const max=1600,scale=Math.min(1,max/Math.max(img.width,img.height));const w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round(img.height*scale));const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);return new Promise(resolve=>c.toBlob(b=>resolve(b||file),'image/jpeg',0.78))}
+async function addPhotos(ev){const files=[...(ev.target.files||[])];if(!files.length)return;for(const f of files){if(!f.type.startsWith('image/'))continue;try{const blob=await compressImage(f);currentPhotos.push({id:uid(),name:(f.name||'Schadenfoto').replace(/\.[^.]+$/,'')+'.jpg',type:'image/jpeg',blob})}catch(e){alert('Ein Foto konnte nicht verarbeitet werden.')}}ev.target.value='';renderCurrentPhotos()}
+function revokePhotoUrls(){document.querySelectorAll('#photoGrid img').forEach(img=>{if(img.dataset.url)URL.revokeObjectURL(img.dataset.url)})}
+function renderCurrentPhotos(){revokePhotoUrls();const g=document.getElementById('photoGrid');g.innerHTML='';currentPhotos.forEach((p,i)=>{const d=document.createElement('div');d.className='photoItem';const im=document.createElement('img'),u=URL.createObjectURL(p.blob);im.src=u;im.dataset.url=u;im.alt='Schadenfoto '+(i+1);const b=document.createElement('button');b.className='red';b.type='button';b.textContent='Foto entfernen';b.onclick=()=>removeCurrentPhoto(i);d.append(im,b);g.appendChild(d)});document.getElementById('photoCount').textContent=currentPhotos.length+' Foto'+(currentPhotos.length===1?'':'s')}
+async function removeCurrentPhoto(i){const p=currentPhotos[i];if(!p)return;if(p.persisted)await deletePhotoById(p.id);currentPhotos.splice(i,1);renderCurrentPhotos()}
+async function clearCurrentPhotos(){if(!currentPhotos.length)return;if(!confirm('Alle Fotos dieser Meldung entfernen?'))return;for(const p of currentPhotos){if(p.persisted)await deletePhotoById(p.id)}currentPhotos=[];renderCurrentPhotos()}
+async function saveCurrentPhotos(entryId){const existing=await getPhotosForEntry(entryId);const keep=new Set(currentPhotos.map(p=>p.id));for(const p of existing){if(!keep.has(p.id))await deletePhotoById(p.id)}for(const p of currentPhotos){await putPhoto({id:p.id,entryId,name:p.name,type:p.type||'image/jpeg',blob:p.blob,createdAt:Date.now()});p.persisted=true}}
+async function loadCurrentPhotos(entryId){currentPhotos=(await getPhotosForEntry(entryId)).map(p=>({...p,persisted:true}));renderCurrentPhotos()}
+async function sharePhotoFiles(photos,title,text){if(!photos.length){alert('Keine Fotos gespeichert.');return}const files=photos.map((p,i)=>new File([p.blob],p.name||('Schadenfoto_'+(i+1)+'.jpg'),{type:p.type||'image/jpeg'}));if(navigator.share && (!navigator.canShare || navigator.canShare({files}))){try{await navigator.share({files,title,text});return}catch(e){if(e.name==='AbortError')return}}alert('Das Teilen von Bilddateien ist durch diesen Browser oder die Unternehmensrichtlinie nicht freigegeben. Die übrige Meldung kann weiter genutzt werden.')}
+async function shareCurrentPhotos(){await sharePhotoFiles(currentPhotos,buildSubject(formData()),buildMailBody(formData()))}
+async function shareEntryPhotos(i){const e=entries[i];if(!e)return;const photos=await getPhotosForEntry(e.id);await sharePhotoFiles(photos,buildSubject(e),buildMailBody(e))}
+
+function renderEmployees(selectedName=''){const s=document.getElementById('mitarbeiter');s.innerHTML='<option value="">Bitte auswählen</option>';employees.forEach(x=>{const o=document.createElement('option');o.value=x.name+'|'+x.role;o.textContent=x.name;s.appendChild(o)});if(selectedName){for(let i=0;i<s.options.length;i++){if(s.options[i].value.split('|')[0]===selectedName){s.selectedIndex=i;break}}}setRole()}
+function saveEmployee(){const n=document.getElementById('employeeName').value.trim(),r=document.getElementById('employeeRole').value;if(!n){alert('Bitte einen Namen eingeben.');return}const existing=employees.find(x=>x.name.toLowerCase()===n.toLowerCase());if(existing)existing.role=r;else employees.push({name:n,role:r});saveJSON(EMPLOYEE_KEY,employees);document.getElementById('employeeName').value='';renderEmployees(n);alert(LOCAL_STORAGE_OK?'Mitarbeiter dauerhaft in Edge auf diesem Gerät gespeichert.':'Mitarbeiter nur für diese geöffnete Sitzung übernommen. Die Unternehmensrichtlinie blockiert dauerhafte Speicherung.')}
+function deleteEmployee(){const s=document.getElementById('mitarbeiter');if(!s.value){alert('Bitte zuerst einen Mitarbeiter auswählen.');return}const name=s.value.split('|')[0];if(confirm('Mitarbeiter „'+name+'“ aus der lokalen Auswahlliste löschen? Bereits gespeicherte Aufträge bleiben unverändert.')){employees=employees.filter(x=>x.name!==name);saveJSON(EMPLOYEE_KEY,employees);renderEmployees()}}
+function applyNotdienstTransfer(){
+  let x=null;
+  try{
+    const h=location.hash.startsWith('#transfer=')?location.hash.slice(10):'';
+    if(h){x=JSON.parse(decodeURIComponent(h));history.replaceState(null,'',location.pathname+location.search);}
+  }catch(e){}
+  if(!x)return;
+  if(x.datum)document.getElementById('datum').value=x.datum;
+  setKW();
+  if(x.objekt){
+    const val=x.objekt+'|'+(x.strasse||'');
+    const sel=document.getElementById('objekt');
+    for(let i=0;i<sel.options.length;i++){if(sel.options[i].value===val){sel.selectedIndex=i;break}}
+  }
+  if(x.melder)document.getElementById('melder').value=x.melder;
+  if(x.schaden)document.getElementById('schaden').value=x.schaden;
+  if(x.monteur){
+    const sel=document.getElementById('mitarbeiter'); let found=false;
+    for(let i=0;i<sel.options.length;i++){if(sel.options[i].value.split('|')[0]===x.monteur){sel.selectedIndex=i;found=true;break}}
+    if(!found){const o=document.createElement('option');o.value=x.monteur+'|'+(x.rolle||'');o.textContent=x.monteur;sel.appendChild(o);sel.value=o.value}
+    setRole();
+  }
+  const n=document.getElementById('transferNotice'); if(n)n.style.display='block';
+  updatePreview();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+async function init(){await testIndexedDB();updateStorageStatus();entries=loadJSON(STORAGE_KEY,[]);employees=loadJSON(EMPLOYEE_KEY,[]);customTemplates=loadJSON(CUSTOM_TEMPLATE_KEY,[]);const d=new Date();document.getElementById('datum').value=d.toISOString().slice(0,10);setKW();loadSettings();renderEmployees();renderCurrentPhotos();applyNotdienstTransfer();updatePreview();await render();}
+window.addEventListener('load',init);
+function setRole(){const p=document.getElementById('mitarbeiter').value.split('|');document.getElementById('rolle').value=p[1]||'';updatePreview()}
+function isoWeek(dateString){const d=new Date(dateString+'T12:00:00');const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const day=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-day);const y=new Date(Date.UTC(t.getUTCFullYear(),0,1));return Math.ceil((((t-y)/86400000)+1)/7)}
+function setKW(){const d=document.getElementById('datum').value;document.getElementById('kw').value=d?String(isoWeek(d)).padStart(2,'0'):'';updatePreview()}
+function loadTradeTemplates(){const g=document.getElementById('gewerk').value,s=document.getElementById('baustein');document.getElementById('customTrade').value=g||'';s.innerHTML='<option value="">Textbaustein auswählen</option>';(tradeTemplates[g]||[]).forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;s.appendChild(o)});const own=customTemplates.filter(x=>x.trade===g);if(own.length){const grp=document.createElement('optgroup');grp.label='Eigene Bausteine auf diesem Gerät';own.forEach(x=>{const o=document.createElement('option');o.value=x.text;o.textContent='★ '+x.title+' – '+x.text;o.dataset.customId=x.id;grp.appendChild(o)});s.appendChild(grp)}updatePreview()}
+function insertBlock(){const s=document.getElementById('baustein'),t=document.getElementById('schaden');if(!s.value)return;t.value=t.value.trim()?t.value.trim()+'\n'+s.value:s.value;s.value='';updatePreview()}
+function toggleInsurance(){document.getElementById('insuranceFields').style.display=document.getElementById('versicherung').checked?'block':'none'}
+function saveCustomTemplate(){const trade=document.getElementById('gewerk').value,title=document.getElementById('customTitle').value.trim(),text=document.getElementById('customText').value.trim();if(!trade){alert('Bitte zuerst oben ein Gewerk auswählen.');return}if(!title||!text){alert('Bitte Kurzbezeichnung und Auftragstext eingeben.');return}customTemplates.push({id:uid(),trade,title,text,createdAt:new Date().toISOString()});if(!saveJSON(CUSTOM_TEMPLATE_KEY,customTemplates)){alert('Der Baustein konnte wegen der Unternehmensrichtlinie nur für diese Sitzung gespeichert werden.')}else{alert('Eigener Baustein lokal in Edge gespeichert.')}document.getElementById('customTitle').value='';document.getElementById('customText').value='';loadTradeTemplates()}
+function deleteSelectedCustomTemplate(){const s=document.getElementById('baustein'),o=s.options[s.selectedIndex],id=o&&o.dataset?o.dataset.customId:'';if(!id){alert('Bitte in der Liste einen eigenen Baustein mit ★ auswählen.');return}const x=customTemplates.find(v=>v.id===id);if(!x)return;if(confirm('Eigenen Baustein „'+x.title+'“ löschen?')){customTemplates=customTemplates.filter(v=>v.id!==id);saveJSON(CUSTOM_TEMPLATE_KEY,customTemplates);loadTradeTemplates()}}
+function exportCustomTemplates(){if(!customTemplates.length){alert('Keine eigenen Bausteine vorhanden.');return}const out={appId:'schadenmeldung-custom-templates',formatVersion:1,createdAt:new Date().toISOString(),templates:customTemplates};const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Schadenmeldung_Eigene_Bausteine_'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function saveSettings(){saveJSON(SETTINGS_KEY,{to:document.getElementById('mailTo').value.trim(),cc:document.getElementById('mailCc').value.trim()})}
+function loadSettings(){const x=loadJSON(SETTINGS_KEY,{});document.getElementById('mailTo').value=x.to||'';document.getElementById('mailCc').value=x.cc||''}
+function formatDateDE(v){if(!v)return'';const p=v.split('-');return p.length===3?p[2]+'.'+p[1]+'.'+p[0]:v}
+function formData(){const obj=document.getElementById('objekt').value.split('|'),mit=document.getElementById('mitarbeiter').value.split('|');return {id:editIndex>=0&&entries[editIndex]?entries[editIndex].id:Date.now(),datum:document.getElementById('datum').value,kw:document.getElementById('kw').value,monteur:mit[0]||'',rolle:mit[1]||'',melder:document.getElementById('melder').value,prioritaet:document.getElementById('prioritaet').value,gewerk:document.getElementById('gewerk').value,status:document.getElementById('status').value,objekt:obj[0]||'',strasse:obj[1]||'',schadensort:document.getElementById('schadensort').value.trim(),schaden:document.getElementById('schaden').value.trim(),versicherung:document.getElementById('versicherung').checked,versicherungText:document.getElementById('versicherungText').value.trim()}}
+function mark(id,ok){document.getElementById(id).classList.toggle('error',!ok)}
+function validate(){let ok=true;['datum','mitarbeiter','melder','prioritaet','gewerk','objekt','schadensort','schaden'].forEach(id=>{const good=!!String(document.getElementById(id).value||'').trim();mark(id,good);if(!good)ok=false});if(!ok)alert('Bitte alle Pflichtfelder ausfüllen.');return ok}
+function buildSubject(e){return 'Auftragsmeldung '+e.objekt+' – '+e.gewerk+' – '+e.prioritaet}
+function buildMailBody(e){return [
+'Guten Tag,','',
+'bitte folgenden Schaden prüfen und die erforderliche Instandsetzung veranlassen:','',
+'Objekt: '+e.objekt+' – '+e.strasse,
+'Schadensort: '+e.schadensort,
+'Gewerk: '+e.gewerk,
+'Priorität: '+e.prioritaet,
+'Status: '+e.status,
+'Melder: '+e.melder,
+'Datum: '+formatDateDE(e.datum)+' / KW '+e.kw,'',
+'Auftragsbeschreibung:',e.schaden,'',
+(e.versicherung?'VERSICHERUNGSSCHADEN':'') ,
+(e.versicherung&&e.versicherungText?'Ergänzung: '+e.versicherungText:''),
+(e.versicherung?'Schadensursache feststellen. Schaden gegebenenfalls beheben und Folgeschäden beseitigen. Sämtliche Feststellungen und ausgeführten Arbeiten für die Versicherung nachvollziehbar dokumentieren.':''),'',
+(e.photoCount?'Fotos zum Auftrag: '+e.photoCount+' (lokal gespeichert / bei Bedarf separat teilen)':''),'',
+'Bitte um Rückmeldung bzw. Ausführung der erforderlichen Arbeiten.','',
+'Erfasst durch: '+e.monteur+(e.rolle?' – '+e.rolle:'')
+].join('\n')}
+function updatePreview(){document.getElementById('preview').textContent=buildMailBody(formData())}
+['melder','prioritaet','status','objekt','schadensort'].forEach(id=>document.addEventListener('change',e=>{if(e.target&&e.target.id===id)updatePreview()}));
+async function persistCurrent(){if(!validate())return null;const e=formData();e.photoCount=currentPhotos.length;if(editIndex>=0){entries[editIndex]=e}else{entries.unshift(e)}if(!saveJSON(STORAGE_KEY,entries))return null;try{await saveCurrentPhotos(e.id)}catch(err){alert('Der Auftrag wurde gespeichert, aber die Fotos konnten nicht vollständig lokal gespeichert werden.')}editIndex=-1;await render();return e}
+async function saveOnly(){const e=await persistCurrent();if(e){alert((LOCAL_STORAGE_OK?'Auftragsmeldung dauerhaft gespeichert.':'Auftragsmeldung nur für diese Sitzung gespeichert.')+(INDEXED_DB_OK?' Fotos dauerhaft gespeichert.':' Fotos nur für diese Sitzung gespeichert.'));resetForm(false)}}
+async function saveAndMail(){const e=await persistCurrent();if(!e)return;saveSettings();const to=document.getElementById('mailTo').value.trim(),cc=document.getElementById('mailCc').value.trim();let url='mailto:'+encodeURIComponent(to)+'?subject='+encodeURIComponent(buildSubject(e))+'&body='+encodeURIComponent(buildMailBody(e));if(cc)url+='&cc='+encodeURIComponent(cc);window.location.href=url;resetForm(false)}
+async function copyMailText(){const txt=buildMailBody(formData());try{await navigator.clipboard.writeText(txt);alert('Meldetext kopiert.')}catch(e){const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();alert('Meldetext kopiert.')}}
+function resetForm(keepDate=true){editIndex=-1;const date=keepDate?document.getElementById('datum').value:new Date().toISOString().slice(0,10);['mitarbeiter','melder','prioritaet','gewerk','objekt'].forEach(id=>document.getElementById(id).value='');document.getElementById('rolle').value='';document.getElementById('status').value='Offen';document.getElementById('schadensort').value='';document.getElementById('schaden').value='';document.getElementById('versicherung').checked=false;document.getElementById('versicherungText').value='';toggleInsurance();currentPhotos=[];renderCurrentPhotos();document.getElementById('datum').value=date;setKW();loadTradeTemplates();updatePreview();window.scrollTo({top:0,behavior:'smooth'})}
+async function loadEntry(i){const e=entries[i];if(!e)return;editIndex=i;document.getElementById('datum').value=e.datum;setKW();document.getElementById('melder').value=e.melder;document.getElementById('prioritaet').value=e.prioritaet;document.getElementById('gewerk').value=e.gewerk;loadTradeTemplates();document.getElementById('status').value=e.status||'Offen';document.getElementById('objekt').value=e.objekt+'|'+e.strasse;document.getElementById('schadensort').value=e.schadensort;document.getElementById('schaden').value=e.schaden;document.getElementById('versicherung').checked=!!e.versicherung;document.getElementById('versicherungText').value=e.versicherungText||'';toggleInsurance();const s=document.getElementById('mitarbeiter');let found=false;for(let x=0;x<s.options.length;x++){if(s.options[x].value.split('|')[0]===e.monteur){s.selectedIndex=x;found=true;break}}if(!found&&e.monteur){const o=document.createElement('option');o.value=e.monteur+'|'+(e.rolle||'');o.textContent=e.monteur;s.appendChild(o);s.value=o.value}setRole();await loadCurrentPhotos(e.id);updatePreview();window.scrollTo({top:0,behavior:'smooth'})}
+function mailEntry(i){const e=entries[i];if(!e)return;const to=document.getElementById('mailTo').value.trim(),cc=document.getElementById('mailCc').value.trim();let url='mailto:'+encodeURIComponent(to)+'?subject='+encodeURIComponent(buildSubject(e))+'&body='+encodeURIComponent(buildMailBody(e));if(cc)url+='&cc='+encodeURIComponent(cc);window.location.href=url}
+async function deleteEntry(i){if(confirm('Diesen Auftrag einschließlich lokal gespeicherter Fotos löschen?')){const e=entries[i];if(e)await deletePhotosForEntry(e.id);entries.splice(i,1);saveJSON(STORAGE_KEY,entries);render()}}
+async function render(){const body=document.querySelector('#tbl tbody'),q=(document.getElementById('search')?.value||'').toLowerCase(),sf=document.getElementById('statusFilter')?.value||'';body.innerHTML='';let shown=0;for(let i=0;i<entries.length;i++){const e=entries[i];const hay=[e.datum,e.objekt,e.strasse,e.schadensort,e.gewerk,e.prioritaet,e.melder,e.schaden,e.status,e.monteur].join(' ').toLowerCase();if(q&&!hay.includes(q))continue;if(sf&&e.status!==sf)continue;shown++;const tr=document.createElement('tr');const pc=await countPhotosForEntry(e.id);e.photoCount=pc;[formatDateDE(e.datum),e.objekt+' – '+e.strasse,e.schadensort,e.gewerk,e.prioritaet,e.melder,e.schaden,String(pc),e.status,e.monteur].forEach(v=>{const td=document.createElement('td');td.textContent=v||'';tr.appendChild(td)});const a=document.createElement('td');a.className='noPrint';[['Bearbeiten','grey',()=>loadEntry(i)],['Mail','green',()=>mailEntry(i)],['Fotos teilen','orange',()=>shareEntryPhotos(i)],['Löschen','red',()=>deleteEntry(i)]].forEach(x=>{const b=document.createElement('button');b.textContent=x[0];b.className='small '+x[1];b.onclick=x[2];a.appendChild(b)});tr.appendChild(a);body.appendChild(tr)}document.getElementById('count').textContent=shown+' / '+entries.length}
+function csvCell(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'}
+function exportCSV(){if(!entries.length){alert('Keine Aufträge gespeichert.');return}const rows=[['Datum','KW','Objekt','Straße','Schadensort','Gewerk','Priorität','Melder','Status','Mitarbeiter','Rolle','Auftragsbeschreibung','Versicherungsschaden','Versicherung Ergänzung']];entries.forEach(e=>rows.push([formatDateDE(e.datum),e.kw,e.objekt,e.strasse,e.schadensort,e.gewerk,e.prioritaet,e.melder,e.status,e.monteur,e.rolle,e.schaden,e.versicherung?'Ja':'Nein',e.versicherungText||'']));const csv='\uFEFF'+rows.map(r=>r.map(csvCell).join(';')).join('\r\n'),blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Auftragsmeldungen_'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+async function clearEntries(){if(confirm('Wirklich ALLE gespeicherten Aufträge und zugehörigen Fotos auf diesem Gerät löschen?')){for(const e of entries)await deletePhotosForEntry(e.id);entries=[];saveJSON(STORAGE_KEY,entries);render()}}
+</script>
+</body>
+</html>

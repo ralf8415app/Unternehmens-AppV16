@@ -1,0 +1,9 @@
+{
+  "name": "Schaden- & Auftragsmeldung mit Notdienst",
+  "short_name": "Schadenmeldung",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eef1f4",
+  "theme_color": "#123c5a"
+}
