@@ -1,0 +1,11 @@
+V18 – Eigene Gewerke & Bausteinverwaltung
+- Eigene Bausteine: Löschfunktion überprüft und verbessert.
+- Jeder eigene Baustein wird jetzt in einer sichtbaren Verwaltungsliste mit eigenem Löschen-Button angezeigt.
+- Eigene Gewerke können direkt im Bereich „Eigene Gewerke & Textbausteine“ angelegt werden.
+- Eigene Gewerke erscheinen anschließend in der normalen Gewerk-Auswahl.
+- Standard-Gewerke bleiben geschützt und können nicht gelöscht werden.
+- Eigene Gewerke können erst gelöscht werden, wenn keine eigenen Bausteine mehr zugeordnet sind.
+- Doppelte Gewerke und identische Bausteine werden abgefangen.
+- Export enthält eigene Gewerke + eigene Bausteine.
+- Schadensmeldungs-Backup enthält eigene Gewerke zusätzlich zu den eigenen Bausteinen.
+- Alte V17/V16-Backups ohne eigene Gewerke bleiben importierbar.

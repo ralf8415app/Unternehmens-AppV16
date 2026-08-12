@@ -63,7 +63,7 @@ hr{border:0;border-top:1px solid #e1e4e8;margin:18px 0}
 <select id="prioritaet"><option value="">Bitte auswählen</option><option>Normal</option><option>Dringend</option><option>Sofort / Gefahr im Verzug</option></select></div>
 <div><label>Gewerk <span class="req">*</span></label>
 <select id="gewerk" onchange="loadTradeTemplates()">
-<option value="">Bitte auswählen</option><option>Schreiner / Türen</option><option>Fensterbau</option><option>Schlüsseldienst</option><option>Leckortung</option><option>Sanitär</option><option>Heizung</option><option>Elektrik</option><option>Brandschutz / BMZ</option><option>Metallbau</option><option>Kanalreinigung</option><option>Schädlingsbekämpfung</option><option>Reinigung</option><option>Garten- und Landschaftsbau</option><option>Entrümpelung</option><option>Wartungsvertrag</option><option>Wartung</option><option>Sonstiges</option>
+<option value="">Bitte auswählen</option><option>Schreiner / Türen</option><option>Fensterbau</option><option>Schlüsseldienst</option><option>Leckortung</option><option>Sanitär</option><option>Heizung</option><option>Elektrik</option><option>Brandschutz / BMZ</option><option>Metallbau</option><option>Kanalreinigung</option><option>Schädlingsbekämpfung</option><option>Reinigung</option><option>Garten- und Landschaftsbau</option><option>Maler / Lackierer</option><option>Dachdecker</option><option>Mieterwechsel</option><option>Entrümpelung</option><option>Wartungsvertrag</option><option>Wartung</option><option>Sonstiges</option>
 </select></div>
 <div><label>Status</label><select id="status"><option>Offen</option><option>Beauftragt</option><option>In Bearbeitung</option><option>Erledigt</option></select></div>
 </div>
@@ -94,19 +94,36 @@ hr{border:0;border-top:1px solid #e1e4e8;margin:18px 0}
 </div>
 
 <hr>
-<h3>Eigene Textbausteine für dieses Gewerk</h3>
-<p class="note">Eigene Bausteine werden nur in der Schadensmeldungs-App auf diesem Gerät gespeichert. Sie können separat exportiert und später als geprüfte Standard-Bausteine in eine neue App-Version übernommen werden.</p>
+<h3>Eigene Gewerke & Textbausteine</h3>
+<p class="note">Hier kannst du eigene Gewerke und dazu passende Textbausteine anlegen. Beides wird nur lokal auf diesem Gerät gespeichert, sofern Edge-Speicher erlaubt ist.</p>
+
+<div class="grid2">
+  <div>
+    <label>Gewerk für eigenen Baustein</label>
+    <select id="customTradeSelect" onchange="syncCustomTradeFromEditor()"></select>
+  </div>
+  <div>
+    <label>Neues eigenes Gewerk</label>
+    <input id="newCustomTrade" placeholder="z. B. Bodenleger">
+  </div>
+</div>
+<br><div class="toolbar">
+  <button class="grey" type="button" onclick="addCustomTrade()">Eigenes Gewerk speichern</button>
+  <button class="red" type="button" onclick="deleteSelectedCustomTrade()">Ausgewähltes eigenes Gewerk löschen</button>
+</div>
+<p class="muted">Standard-Gewerke können nicht gelöscht werden. Ein eigenes Gewerk kann erst gelöscht werden, wenn keine eigenen Bausteine mehr dazu vorhanden sind.</p>
+
 <div class="grid2">
   <div><label>Kurzbezeichnung</label><input id="customTitle" placeholder="z. B. Kakerlakenbekämpfung"></div>
-  <div><label>Gewerk</label><input id="customTrade" readonly placeholder="Gewerk oben auswählen"></div>
+  <div><label>Eigener Auftragstext</label><textarea id="customText" placeholder="Eigenen Textbaustein eingeben …"></textarea></div>
 </div>
-<br><label>Eigener Auftragstext</label>
-<textarea id="customText" placeholder="Eigenen Textbaustein eingeben …"></textarea>
 <br><div class="toolbar">
   <button class="grey" type="button" onclick="saveCustomTemplate()">Baustein lokal speichern</button>
-  <button class="red" type="button" onclick="deleteSelectedCustomTemplate()">Ausgewählten eigenen Baustein löschen</button>
-  <button class="orange" type="button" onclick="exportCustomTemplates()">Eigene Bausteine exportieren</button>
+  <button class="orange" type="button" onclick="exportCustomTemplates()">Eigene Gewerke & Bausteine exportieren</button>
 </div>
+
+<h4>Eigene Bausteine verwalten</h4>
+<div id="customTemplateManager" class="small"></div>
 
 <hr>
 <h3>Fotos zum Schaden <span id="photoCount" class="badge">0</span></h3>
@@ -156,7 +173,7 @@ hr{border:0;border-top:1px solid #e1e4e8;margin:18px 0}
 </section>
 <section class="card noPrint" id="rechtliches">
 <h2>Über diese App / Rechtliches</h2>
-<div class="privacyBox"><b>© 2026 Ralf Peter Jung – Alle Rechte vorbehalten.</b><br><br>Diese App ist für die Erfassung und Bearbeitung von Schaden- und Auftragsmeldungen vorgesehen. Eine unerlaubte Vervielfältigung, Weitergabe, Veröffentlichung oder Veränderung der App bzw. ihrer individuellen Inhalte ist nicht gestattet, soweit keine entsprechende Erlaubnis vorliegt.<br><br><b>Datenschutz:</b> Personenbezogene Nutzdaten werden von der App nicht an den Hosting-Server übertragen. Lokale Speicherung erfolgt nur, soweit Browser und Unternehmensrichtlinie dies zulassen. Backup-Dateien sind unverschlüsselte Exportdateien und müssen organisatorisch geschützt abgelegt werden. Beim Laden der Web-App verarbeitet der Hosting-Anbieter technisch notwendige Verbindungsdaten; beim E-Mail-Versand verarbeitet der eingesetzte Maildienst die ausgewählten Inhalte. Verantwortlicher, Rechtsgrundlage, Aufbewahrungsfristen, Berechtigungen und weitere technische/organisatorische Maßnahmen sind vom betreibenden Unternehmen festzulegen.<br><br><b>Version:</b> V16 – Edge Unternehmen / zweisprachige Komplettanleitung</div>
+<div class="privacyBox"><b>© 2026 Ralf Peter Jung – Alle Rechte vorbehalten.</b><br><br>Diese App ist für die Erfassung und Bearbeitung von Schaden- und Auftragsmeldungen vorgesehen. Eine unerlaubte Vervielfältigung, Weitergabe, Veröffentlichung oder Veränderung der App bzw. ihrer individuellen Inhalte ist nicht gestattet, soweit keine entsprechende Erlaubnis vorliegt.<br><br><b>Datenschutz:</b> Personenbezogene Nutzdaten werden von der App nicht an den Hosting-Server übertragen. Lokale Speicherung erfolgt nur, soweit Browser und Unternehmensrichtlinie dies zulassen. Backup-Dateien sind unverschlüsselte Exportdateien und müssen organisatorisch geschützt abgelegt werden. Beim Laden der Web-App verarbeitet der Hosting-Anbieter technisch notwendige Verbindungsdaten; beim E-Mail-Versand verarbeitet der eingesetzte Maildienst die ausgewählten Inhalte. Verantwortlicher, Rechtsgrundlage, Aufbewahrungsfristen, Berechtigungen und weitere technische/organisatorische Maßnahmen sind vom betreibenden Unternehmen festzulegen.<br><br><b>Version:</b> V18 – Edge Unternehmen / eigene Gewerke & Bausteinverwaltung</div>
 </section>
 </main>
 
@@ -172,7 +189,7 @@ hr{border:0;border-top:1px solid #e1e4e8;margin:18px 0}
 <h3>3. Schaden/Auftrag erfassen</h3>
 <p>Datum, Mitarbeiter, Melder, Priorität, Gewerk, Objekt/Straße und Schadensort auswählen bzw. eingeben. Danach einen vorhandenen Textbaustein wählen oder den Auftrag frei schreiben. Pflichtfelder sind mit * gekennzeichnet.</p>
 <h3>4. Eigene Textbausteine</h3>
-<p>Gewerk auswählen, Kurzbezeichnung und eigenen Auftragstext eingeben und „Baustein lokal speichern“ wählen. Diese Bausteine gelten nur auf diesem Gerät. „Eigene Bausteine exportieren“ erzeugt eine separate Datei nur mit den eigenen Bausteinen; sie kann später zur Prüfung und Übernahme in eine neue allgemeine App-Version verwendet werden.</p>
+<p>Vorhandenes Gewerk auswählen oder direkt im Baustein-Editor ein eigenes Gewerk anlegen. Danach Kurzbezeichnung und Auftragstext eingeben und lokal speichern. Eigene Bausteine können einzeln gelöscht werden. Eigene Gewerke können gelöscht werden, sobald keine eigenen Bausteine mehr dazu gespeichert sind. Der Export enthält ausschließlich eigene Gewerke und eigene Bausteine.</p>
 <h3>5. Versicherungsschaden</h3>
 <p>„Versicherungsschaden“ aktivieren und bei Bedarf eine freie Ergänzung eingeben. Die App ergänzt automatisch den festen Dokumentationsauftrag zur Ermittlung der Schadensursache, gegebenenfalls zur Behebung des Schadens und der Folgeschäden sowie zur nachvollziehbaren Dokumentation für die Versicherung.</p>
 <h3>6. Fotos</h3>
@@ -203,7 +220,7 @@ hr{border:0;border-top:1px solid #e1e4e8;margin:18px 0}
 <h3>3. Create a damage/work order</h3>
 <p>Select or enter date, employee, reporter, priority, trade, property/street and damage location. Then select a prepared text block or enter the work description manually. Fields marked * are mandatory.</p>
 <h3>4. Custom text blocks</h3>
-<p>Select a trade, enter a short title and work-order text, then save the block locally. Custom blocks exist only on this device. “Eigene Bausteine exportieren” exports only the custom blocks so they can later be reviewed and added to a future standard app version.</p>
+<p>Select an existing trade or create a custom trade directly in the text-block editor. Enter a short title and work-order text and save locally. Custom blocks can be deleted individually; custom trades can be deleted after their custom blocks have been removed. The export contains only custom trades and custom text blocks.</p>
 <h3>5. Insurance claim</h3>
 <p>Enable “Versicherungsschaden” and add free text if required. The app automatically adds the standard instruction to identify the cause, repair the damage where appropriate, remove consequential damage, and document findings and work for the insurer.</p>
 <h3>6. Photos</h3>
@@ -234,7 +251,8 @@ const STORAGE_KEY='schaden_auftraege_v1';
 const SETTINGS_KEY='schaden_mail_settings_v1';
 const EMPLOYEE_KEY='schaden_mitarbeiter_lokal_v1';
 const CUSTOM_TEMPLATE_KEY='schaden_eigene_bausteine_v1';
-let entries=loadJSON(STORAGE_KEY,[]), employees=loadJSON(EMPLOYEE_KEY,[]), customTemplates=loadJSON(CUSTOM_TEMPLATE_KEY,[]), editIndex=-1;
+const CUSTOM_TRADE_KEY='schaden_eigene_gewerke_v1';
+let entries=loadJSON(STORAGE_KEY,[]), employees=loadJSON(EMPLOYEE_KEY,[]), customTemplates=loadJSON(CUSTOM_TEMPLATE_KEY,[]), customTrades=loadJSON(CUSTOM_TRADE_KEY,[]), editIndex=-1;
 let currentPhotos=[]; // {id,name,type,blob,url?} nur im Arbeitsspeicher; dauerhaft in IndexedDB
 const PHOTO_DB='schaden_fotos_v1', PHOTO_STORE='photos';
 
@@ -252,6 +270,33 @@ const tradeTemplates={
 'Schädlingsbekämpfung':['Arbeiten gemäß bestehendem Wartungsvertrag durchführen.','Kakerlakenbefall prüfen und fachgerecht bekämpfen.','Schädlingsbefall prüfen und geeignete Bekämpfungsmaßnahmen durchführen.','Kontroll- und Nachbehandlung gemäß Wartungsvertrag durchführen.'],
 'Reinigung':['Sonderreinigung erforderlich. Betroffenen Bereich bitte fachgerecht reinigen und Zustand dokumentieren.'],
 'Garten- und Landschaftsbau':['Gefahrenstelle im Außenbereich festgestellt. Bitte prüfen und fachgerecht beseitigen.','Vegetation / Bewuchs beeinträchtigt Verkehrs- oder Fluchtweg. Bitte zurückschneiden.'],
+'Maler / Lackierer':[
+'Zimmer / Raum fachgerecht streichen. Untergrund vor Ausführung prüfen, erforderliche Vorarbeiten durchführen und Wand- sowie Deckenflächen deckend beschichten.',
+'Wandflächen fachgerecht instand setzen. Lose bzw. schadhafte Stellen prüfen, vorbereiten, erforderlichenfalls spachteln und schleifen; anschließend geeigneten Beschichtungsaufbau herstellen.',
+'Deckenflächen fachgerecht vorbereiten und deckend streichen. Flecken bzw. Verfärbungen vorab prüfen und erforderlichenfalls geeignete Isolier- oder Grundiermaßnahmen ausführen.',
+'Türen und Türzargen fachgerecht lackieren. Altbeschichtung prüfen, reinigen, anschleifen bzw. schadhafte Stellen vorbereiten und geeigneten Beschichtungsaufbau herstellen.',
+'Beschädigte Wand- und Putzflächen prüfen und fachgerecht wiederherstellen. Oberfläche für die vorgesehene Schlussbeschichtung geeignet vorbereiten.',
+'Bohrlöcher, Dübellöcher und kleinere Fehlstellen fachgerecht schließen, Oberfläche angleichen und anschließend erforderliche Beschichtungsarbeiten durchführen.',
+'Wasser-, Nikotin- oder sonstige Verfärbungen prüfen. Ursache muss vor der Schlussbeschichtung geklärt sein; erforderlichenfalls geeignete Sperr-/Isoliergrundierung und anschließenden Deckanstrich ausführen.',
+'Untergrund auf Tragfähigkeit, Verschmutzung und Saugverhalten prüfen, fachgerecht vorbereiten und erforderlichenfalls grundieren; anschließend Schlussbeschichtung herstellen.'
+],
+'Dachdecker':[
+'Undichtigkeit am Dach feststellen. Schadstelle und Ursache fachgerecht lokalisieren, erforderliche Abdichtungs- bzw. Instandsetzungsarbeiten durchführen und festgestellte Folgeschäden dokumentieren.',
+'Dachfläche auf beschädigte, verschobene oder fehlende Dachziegel / Dachsteine prüfen. Schadhafte Teile fachgerecht sichern bzw. ersetzen und angrenzende Bereiche kontrollieren.',
+'Dachdurchdringungen, Anschlüsse und Abschlüsse auf Undichtigkeiten prüfen und erforderliche Abdichtungsarbeiten fachgerecht ausführen.',
+'Dachentwässerung einschließlich Dachrinne, Einläufe und Fallrohranschlüsse auf Verstopfung, Beschädigung und ordnungsgemäßen Ablauf prüfen; erforderliche Reinigung bzw. Instandsetzung durchführen.',
+'Flachdach / Dachabdichtung auf sichtbare Schäden und Undichtigkeiten prüfen. Ursache lokalisieren und Abdichtung fachgerecht instand setzen; Folgeschäden dokumentieren.',
+'Dachfenster und zugehörige Anschlüsse auf Undichtigkeit bzw. Beschädigung prüfen und erforderliche Instandsetzung veranlassen bzw. durchführen.',
+'Nach Sturmereignis Dachfläche, Befestigungen, Anschlüsse und lose Bauteile auf Schäden bzw. Gefahren prüfen. Gefahrenstellen sichern und erforderliche Instandsetzungsmaßnahmen dokumentieren.',
+'Dachinspektion durchführen. Dachfläche, funktionswichtige Einbauteile, Entwässerung, Durchdringungen und sichtbare Befestigungen prüfen; festgestellte Mängel und erforderliche Maßnahmen dokumentieren.'
+],
+'Mieterwechsel':[
+'Entrümpelung des Zimmers / der Wohnung nach Vorgabe der Betreuung durchführen.',
+'Vom bisherigen Mieter zurückgelassene eigene Gegenstände nach Vorgabe der Betreuung behandeln, einlagern bzw. zur weiteren Bearbeitung bereitstellen. Keine Entsorgung ohne entsprechende Vorgabe.',
+'Zimmer / Wohnung nach Auszug vollständig auf Schäden, zurückgelassene Gegenstände und erforderliche Handwerkerleistungen prüfen und notwendige Arbeiten dokumentieren.',
+'Nach Abschluss aller beauftragten Handwerkerleistungen Zimmer / Wohnung nach Vorgabe der Betreuung wieder einrichten.',
+'Mieterwechsel komplett: Entrümpelung nach Vorgabe der Betreuung durchführen; zurückgelassene persönliche Gegenstände nur nach Vorgabe behandeln bzw. einlagern; erforderliche Handwerkerarbeiten durchführen lassen und Zimmer / Wohnung nach Abschluss aller Arbeiten nach Vorgabe der Betreuung wieder einrichten.'
+],
 'Entrümpelung':['Entrümpelung nach Vorgabe des Betreuers durchführen.','Zimmer nach Vorgabe des Betreuers einrichten.','Sperrmüll / Gegenstände im Gemeinschafts- bzw. Fluchtwegbereich. Bitte räumen und ordnungsgemäß entsorgen.'],
 'Wartungsvertrag':['Wartungsvertrag prüfen und die vertraglich vereinbarte Wartung fristgerecht durchführen. Wartungsnachweis / Prüfprotokoll bitte übermitteln.','Wartung gemäß bestehendem Wartungsvertrag durchführen. Festgestellte Mängel bitte dokumentieren und erforderliche Instandsetzungsmaßnahmen gesondert mitteilen.'],
 'Wartung':['Wartung Brandschutztür: Brandschutztür einschließlich Beschläge, Schließfunktion, Türschließer und Dichtungen gemäß Herstellervorgaben prüfen und warten. Festgestellte Mängel dokumentieren.','Wartung BMZ-Anlage: Brandmeldeanlage gemäß Wartungsintervall und Herstellervorgaben prüfen und warten. Störungen und festgestellte Mängel dokumentieren.','Wartung Lüftungsanlage: Lüftungsanlage einschließlich Filter, Funktion und sichtbarer Anlagenteile prüfen und warten. Erforderlichen Filterwechsel und festgestellte Mängel dokumentieren.','Allgemeine Wartung: Anlage / Bauteil gemäß Herstellervorgaben und vereinbartem Wartungsumfang prüfen und warten. Festgestellte Mängel und erforderliche Instandsetzungen dokumentieren.','Wartung Schädlingsbekämpfung: Vereinbarte Kontroll- und Wartungsmaßnahmen durchführen. Befall, Köderstellen und erforderliche Folgemaßnahmen dokumentieren.','Wartung Feuerlöscher: Feuerlöscher gemäß vorgeschriebenem Prüf- und Wartungsintervall kontrollieren und warten. Prüfkennzeichnung aktualisieren und Mängel dokumentieren.','Instandsetzung Feuerlöscher: Beanstandeten bzw. nicht einsatzbereiten Feuerlöscher fachgerecht prüfen und instand setzen. Falls eine Instandsetzung nicht möglich oder wirtschaftlich ist, Austausch mitteilen bzw. veranlassen.'],
@@ -292,8 +337,8 @@ async function clearAllPhotos(){if(INDEXED_DB_OK){await idbRun('readwrite',s=>s.
 function updateStorageStatus(){const el=document.getElementById('storageStatus');if(!el)return;const persistent=LOCAL_STORAGE_OK&&INDEXED_DB_OK;if(persistent){el.style.background='#e7f6ec';el.style.borderColor='#75b987';el.innerHTML='<b>Edge-Speichertest: OK.</b> Namen, Einstellungen, Aufträge und Fotos können auf diesem Gerät dauerhaft lokal gespeichert werden.'}else if(LOCAL_STORAGE_OK){el.style.background='#fff3cd';el.style.borderColor='#d6b85b';el.innerHTML='<b>Edge-Speichertest: teilweise verfügbar.</b> Namen, Einstellungen und Aufträge werden dauerhaft gespeichert; Fotos bleiben nur für die aktuelle Sitzung verfügbar.'}else{el.style.background='#fde8e8';el.style.borderColor='#d88';el.innerHTML='<b>Edge-Speichertest: durch Richtlinie blockiert.</b> Daten bleiben nur erhalten, solange diese Seite geöffnet ist. Vor dem Schließen exportieren oder versenden.'}}
 function blobToDataURL(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(blob)})}
 function dataURLToBlob(dataURL){const parts=String(dataURL||'').split(',');if(parts.length<2)throw new Error('Ungültige Bilddaten');const m=/data:([^;]+);base64/.exec(parts[0]);const type=m?m[1]:'application/octet-stream';const bin=atob(parts[1]);const arr=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);return new Blob([arr],{type})}
-async function exportFullBackup(){try{saveSettings();const photos=await getAllPhotos();const photoExport=[];for(const p of photos){photoExport.push({id:p.id,entryId:p.entryId,name:p.name,type:p.type,createdAt:p.createdAt||null,data:await blobToDataURL(p.blob)})}const backup={appId:'schadenmeldung-edge',app:'Schadenmeldung Edge Unternehmen',formatVersion:2,createdAt:new Date().toISOString(),entries,employees,settings:loadJSON(SETTINGS_KEY,{}),customTemplates,photos:photoExport};const blob=new Blob([JSON.stringify(backup)],{type:'application/json;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Schadenmeldung_Datensicherung_'+new Date().toISOString().slice(0,10)+'.schadenbackup.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500);alert('Schadensmeldungs-Sicherung erstellt. Sie enthält nur Daten dieser App – keine Notdienst-Daten.')}catch(err){console.error(err);alert('Die Schadensmeldungs-Sicherung konnte nicht erstellt werden. Prüfe den freien Speicherplatz auf dem Gerät.')}}
-async function importFullBackup(ev){const input=ev.target,file=input.files&&input.files[0];input.value='';if(!file)return;let backup;try{backup=JSON.parse(await file.text())}catch(err){alert('Die ausgewählte Datei ist keine gültige Sicherungsdatei.');return}const legacy=backup&&backup.app==='Schadenmeldung Edge Unternehmen'&&backup.formatVersion===1;const current=backup&&backup.appId==='schadenmeldung-edge'&&backup.formatVersion===2;if(!legacy&&!current){alert('Diese Datei ist keine Schadensmeldungs-Sicherung. Notdienst- oder fremde Sicherungen werden nicht importiert.');return}if(!Array.isArray(backup.entries)||!Array.isArray(backup.photos)){alert('Die Sicherungsdatei ist unvollständig oder beschädigt.');return}const msg='Schadensmeldungs-Sicherung vom '+(backup.createdAt?new Date(backup.createdAt).toLocaleString('de-DE'):'unbekannten Datum')+' wiederherstellen?\n\nDabei werden nur die Daten der Schadensmeldungs-App ersetzt. Notdienst-Daten bleiben unberührt.';if(!confirm(msg))return;try{await clearAllPhotos();entries=backup.entries||[];employees=Array.isArray(backup.employees)?backup.employees:[];customTemplates=Array.isArray(backup.customTemplates)?backup.customTemplates:[];saveJSON(STORAGE_KEY,entries);saveJSON(EMPLOYEE_KEY,employees);saveJSON(CUSTOM_TEMPLATE_KEY,customTemplates);saveJSON(SETTINGS_KEY,backup.settings||{});for(const p of backup.photos){if(!p||!p.id||!p.entryId||!p.data)continue;await putPhoto({id:p.id,entryId:p.entryId,name:p.name||'Schadenfoto.jpg',type:p.type||'image/jpeg',createdAt:p.createdAt||Date.now(),blob:dataURLToBlob(p.data)})}currentPhotos=[];editIndex=-1;loadSettings();renderEmployees();renderCurrentPhotos();resetForm(false);await render();alert('Schadensmeldungs-Sicherung wiederhergestellt: '+entries.length+' Aufträge, '+customTemplates.length+' eigene Bausteine und '+backup.photos.length+' Fotos.')}catch(err){console.error(err);alert('Die Wiederherstellung ist fehlgeschlagen. Die Sicherungsdatei wurde möglicherweise beschädigt oder der lokale Speicher reicht nicht aus.')}}
+async function exportFullBackup(){try{saveSettings();const photos=await getAllPhotos();const photoExport=[];for(const p of photos){photoExport.push({id:p.id,entryId:p.entryId,name:p.name,type:p.type,createdAt:p.createdAt||null,data:await blobToDataURL(p.blob)})}const backup={appId:'schadenmeldung-edge',app:'Schadenmeldung Edge Unternehmen',formatVersion:2,createdAt:new Date().toISOString(),entries,employees,settings:loadJSON(SETTINGS_KEY,{}),customTemplates,customTrades,photos:photoExport};const blob=new Blob([JSON.stringify(backup)],{type:'application/json;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Schadenmeldung_Datensicherung_'+new Date().toISOString().slice(0,10)+'.schadenbackup.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500);alert('Schadensmeldungs-Sicherung erstellt. Sie enthält nur Daten dieser App – keine Notdienst-Daten.')}catch(err){console.error(err);alert('Die Schadensmeldungs-Sicherung konnte nicht erstellt werden. Prüfe den freien Speicherplatz auf dem Gerät.')}}
+async function importFullBackup(ev){const input=ev.target,file=input.files&&input.files[0];input.value='';if(!file)return;let backup;try{backup=JSON.parse(await file.text())}catch(err){alert('Die ausgewählte Datei ist keine gültige Sicherungsdatei.');return}const legacy=backup&&backup.app==='Schadenmeldung Edge Unternehmen'&&backup.formatVersion===1;const current=backup&&backup.appId==='schadenmeldung-edge'&&backup.formatVersion===2;if(!legacy&&!current){alert('Diese Datei ist keine Schadensmeldungs-Sicherung. Notdienst- oder fremde Sicherungen werden nicht importiert.');return}if(!Array.isArray(backup.entries)||!Array.isArray(backup.photos)){alert('Die Sicherungsdatei ist unvollständig oder beschädigt.');return}const msg='Schadensmeldungs-Sicherung vom '+(backup.createdAt?new Date(backup.createdAt).toLocaleString('de-DE'):'unbekannten Datum')+' wiederherstellen?\n\nDabei werden nur die Daten der Schadensmeldungs-App ersetzt. Notdienst-Daten bleiben unberührt.';if(!confirm(msg))return;try{await clearAllPhotos();entries=backup.entries||[];employees=Array.isArray(backup.employees)?backup.employees:[];customTemplates=Array.isArray(backup.customTemplates)?backup.customTemplates:[];customTrades=Array.isArray(backup.customTrades)?backup.customTrades:[];saveJSON(STORAGE_KEY,entries);saveJSON(EMPLOYEE_KEY,employees);saveJSON(CUSTOM_TEMPLATE_KEY,customTemplates);saveJSON(CUSTOM_TRADE_KEY,customTrades);saveJSON(SETTINGS_KEY,backup.settings||{});for(const p of backup.photos){if(!p||!p.id||!p.entryId||!p.data)continue;await putPhoto({id:p.id,entryId:p.entryId,name:p.name||'Schadenfoto.jpg',type:p.type||'image/jpeg',createdAt:p.createdAt||Date.now(),blob:dataURLToBlob(p.data)})}currentPhotos=[];editIndex=-1;loadSettings();renderEmployees();renderCurrentPhotos();resetForm(false);await render();refreshTradeOptions();alert('Schadensmeldungs-Sicherung wiederhergestellt: '+entries.length+' Aufträge, '+customTrades.length+' eigene Gewerke, '+customTemplates.length+' eigene Bausteine und '+backup.photos.length+' Fotos.')}catch(err){console.error(err);alert('Die Wiederherstellung ist fehlgeschlagen. Die Sicherungsdatei wurde möglicherweise beschädigt oder der lokale Speicher reicht nicht aus.')}}
 function uid(){return Date.now().toString(36)+'_'+Math.random().toString(36).slice(2)}
 function blobToImage(blob){return new Promise((resolve,reject)=>{const u=URL.createObjectURL(blob),im=new Image();im.onload=()=>{URL.revokeObjectURL(u);resolve(im)};im.onerror=e=>{URL.revokeObjectURL(u);reject(e)};im.src=u})}
 async function compressImage(file){const img=await blobToImage(file);const max=1600,scale=Math.min(1,max/Math.max(img.width,img.height));const w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round(img.height*scale));const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);return new Promise(resolve=>c.toBlob(b=>resolve(b||file),'image/jpeg',0.78))}
@@ -342,12 +387,261 @@ window.addEventListener('load',init);
 function setRole(){const p=document.getElementById('mitarbeiter').value.split('|');document.getElementById('rolle').value=p[1]||'';updatePreview()}
 function isoWeek(dateString){const d=new Date(dateString+'T12:00:00');const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const day=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-day);const y=new Date(Date.UTC(t.getUTCFullYear(),0,1));return Math.ceil((((t-y)/86400000)+1)/7)}
 function setKW(){const d=document.getElementById('datum').value;document.getElementById('kw').value=d?String(isoWeek(d)).padStart(2,'0'):'';updatePreview()}
-function loadTradeTemplates(){const g=document.getElementById('gewerk').value,s=document.getElementById('baustein');document.getElementById('customTrade').value=g||'';s.innerHTML='<option value="">Textbaustein auswählen</option>';(tradeTemplates[g]||[]).forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;s.appendChild(o)});const own=customTemplates.filter(x=>x.trade===g);if(own.length){const grp=document.createElement('optgroup');grp.label='Eigene Bausteine auf diesem Gerät';own.forEach(x=>{const o=document.createElement('option');o.value=x.text;o.textContent='★ '+x.title+' – '+x.text;o.dataset.customId=x.id;grp.appendChild(o)});s.appendChild(grp)}updatePreview()}
-function insertBlock(){const s=document.getElementById('baustein'),t=document.getElementById('schaden');if(!s.value)return;t.value=t.value.trim()?t.value.trim()+'\n'+s.value:s.value;s.value='';updatePreview()}
-function toggleInsurance(){document.getElementById('insuranceFields').style.display=document.getElementById('versicherung').checked?'block':'none'}
-function saveCustomTemplate(){const trade=document.getElementById('gewerk').value,title=document.getElementById('customTitle').value.trim(),text=document.getElementById('customText').value.trim();if(!trade){alert('Bitte zuerst oben ein Gewerk auswählen.');return}if(!title||!text){alert('Bitte Kurzbezeichnung und Auftragstext eingeben.');return}customTemplates.push({id:uid(),trade,title,text,createdAt:new Date().toISOString()});if(!saveJSON(CUSTOM_TEMPLATE_KEY,customTemplates)){alert('Der Baustein konnte wegen der Unternehmensrichtlinie nur für diese Sitzung gespeichert werden.')}else{alert('Eigener Baustein lokal in Edge gespeichert.')}document.getElementById('customTitle').value='';document.getElementById('customText').value='';loadTradeTemplates()}
-function deleteSelectedCustomTemplate(){const s=document.getElementById('baustein'),o=s.options[s.selectedIndex],id=o&&o.dataset?o.dataset.customId:'';if(!id){alert('Bitte in der Liste einen eigenen Baustein mit ★ auswählen.');return}const x=customTemplates.find(v=>v.id===id);if(!x)return;if(confirm('Eigenen Baustein „'+x.title+'“ löschen?')){customTemplates=customTemplates.filter(v=>v.id!==id);saveJSON(CUSTOM_TEMPLATE_KEY,customTemplates);loadTradeTemplates()}}
-function exportCustomTemplates(){if(!customTemplates.length){alert('Keine eigenen Bausteine vorhanden.');return}const out={appId:'schadenmeldung-custom-templates',formatVersion:1,createdAt:new Date().toISOString(),templates:customTemplates};const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Schadenmeldung_Eigene_Bausteine_'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function refreshTradeOptions(){
+  const main=document.getElementById('gewerk');
+  const editor=document.getElementById('customTradeSelect');
+  const currentMain=main?main.value:'';
+  const currentEditor=editor?editor.value:'';
+
+  if(main){
+    [...main.querySelectorAll('option[data-custom-trade="1"]')].forEach(o=>o.remove());
+    customTrades.forEach(t=>{
+      const o=document.createElement('option');
+      o.value=t.name;
+      o.textContent='★ '+t.name;
+      o.dataset.customTrade='1';
+      main.appendChild(o);
+    });
+    if([...main.options].some(o=>o.value===currentMain)) main.value=currentMain;
+  }
+
+  if(editor && main){
+    editor.innerHTML='<option value="">Gewerk auswählen</option>';
+    const seen=new Set();
+    [...main.options].forEach(o=>{
+      if(o.value && !seen.has(o.value)){
+        const x=document.createElement('option');
+        x.value=o.value;
+        x.textContent=o.textContent;
+        editor.appendChild(x);
+        seen.add(o.value);
+      }
+    });
+    if([...editor.options].some(o=>o.value===currentEditor)) editor.value=currentEditor;
+    else if(main.value) editor.value=main.value;
+  }
+}
+
+function loadTradeTemplates(){
+  const g=document.getElementById('gewerk').value;
+  const sel=document.getElementById('baustein');
+  refreshTradeOptions();
+  const editor=document.getElementById('customTradeSelect');
+  if(editor && g) editor.value=g;
+
+  sel.innerHTML='<option value="">Textbaustein auswählen</option>';
+  (tradeTemplates[g]||[]).forEach(t=>{
+    const o=document.createElement('option');
+    o.value=t;
+    o.textContent=t;
+    sel.appendChild(o);
+  });
+
+  const own=customTemplates.filter(x=>x.trade===g);
+  if(own.length){
+    const grp=document.createElement('optgroup');
+    grp.label='Eigene Bausteine auf diesem Gerät';
+    own.forEach(x=>{
+      const o=document.createElement('option');
+      o.value=x.text;
+      o.textContent='★ '+x.title+' – '+x.text;
+      o.dataset.customId=x.id;
+      grp.appendChild(o);
+    });
+    sel.appendChild(grp);
+  }
+  renderCustomTemplateManager();
+  updatePreview();
+}
+
+function syncCustomTradeFromEditor(){
+  const editor=document.getElementById('customTradeSelect');
+  const main=document.getElementById('gewerk');
+  if(!editor||!main)return;
+  if([...main.options].some(o=>o.value===editor.value)){
+    main.value=editor.value;
+    loadTradeTemplates();
+  }else{
+    renderCustomTemplateManager();
+  }
+}
+
+function addCustomTrade(){
+  const inp=document.getElementById('newCustomTrade');
+  const name=(inp.value||'').trim().replace(/\s+/g,' ');
+  if(!name){alert('Bitte einen Namen für das neue Gewerk eingeben.');return;}
+
+  const norm=name.toLocaleLowerCase('de-DE');
+  const standardExists=Object.keys(tradeTemplates).some(x=>x.toLocaleLowerCase('de-DE')===norm);
+  const customExists=customTrades.some(x=>x.name.toLocaleLowerCase('de-DE')===norm);
+  if(standardExists||customExists){alert('Dieses Gewerk ist bereits vorhanden.');return;}
+
+  customTrades.push({id:uid(),name,createdAt:new Date().toISOString()});
+  if(!saveJSON(CUSTOM_TRADE_KEY,customTrades)){
+    alert('Das Gewerk konnte wegen der Unternehmensrichtlinie nur für diese Sitzung gespeichert werden.');
+  }else{
+    alert('Eigenes Gewerk lokal gespeichert.');
+  }
+
+  inp.value='';
+  refreshTradeOptions();
+  document.getElementById('gewerk').value=name;
+  document.getElementById('customTradeSelect').value=name;
+  loadTradeTemplates();
+}
+
+function deleteSelectedCustomTrade(){
+  const editor=document.getElementById('customTradeSelect');
+  const name=(editor&&editor.value)||'';
+  const trade=customTrades.find(x=>x.name===name);
+
+  if(!trade){
+    alert('Bitte ein selbst angelegtes Gewerk mit ★ auswählen. Standard-Gewerke können nicht gelöscht werden.');
+    return;
+  }
+
+  const count=customTemplates.filter(x=>x.trade===name).length;
+  if(count){
+    alert('Dieses Gewerk enthält noch '+count+' eigene(n) Baustein(e). Bitte zuerst diese Bausteine löschen.');
+    return;
+  }
+
+  if(confirm('Eigenes Gewerk „'+name+'“ löschen?')){
+    customTrades=customTrades.filter(x=>x.id!==trade.id);
+    saveJSON(CUSTOM_TRADE_KEY,customTrades);
+    if(document.getElementById('gewerk').value===name) document.getElementById('gewerk').value='';
+    refreshTradeOptions();
+    loadTradeTemplates();
+  }
+}
+
+function insertBlock(){
+  const sel=document.getElementById('baustein');
+  const target=document.getElementById('schaden');
+  if(!sel.value)return;
+  target.value=target.value.trim()?target.value.trim()+'\n'+sel.value:sel.value;
+  sel.value='';
+  updatePreview();
+}
+
+function toggleInsurance(){
+  document.getElementById('insuranceFields').style.display=document.getElementById('versicherung').checked?'block':'none';
+}
+
+function saveCustomTemplate(){
+  const editor=document.getElementById('customTradeSelect');
+  const trade=(editor&&editor.value)||document.getElementById('gewerk').value;
+  const title=document.getElementById('customTitle').value.trim();
+  const text=document.getElementById('customText').value.trim();
+
+  if(!trade){alert('Bitte zuerst ein Gewerk auswählen oder ein eigenes Gewerk anlegen.');return;}
+  if(!title||!text){alert('Bitte Kurzbezeichnung und Auftragstext eingeben.');return;}
+
+  const duplicate=customTemplates.some(x=>
+    x.trade===trade &&
+    x.title.toLocaleLowerCase('de-DE')===title.toLocaleLowerCase('de-DE') &&
+    x.text===text
+  );
+  if(duplicate){alert('Dieser eigene Baustein ist bereits vorhanden.');return;}
+
+  customTemplates.push({id:uid(),trade,title,text,createdAt:new Date().toISOString()});
+  if(!saveJSON(CUSTOM_TEMPLATE_KEY,customTemplates)){
+    alert('Der Baustein konnte wegen der Unternehmensrichtlinie nur für diese Sitzung gespeichert werden.');
+  }else{
+    alert('Eigener Baustein lokal in Edge gespeichert.');
+  }
+
+  document.getElementById('customTitle').value='';
+  document.getElementById('customText').value='';
+  document.getElementById('gewerk').value=trade;
+  loadTradeTemplates();
+}
+
+function deleteCustomTemplateById(id){
+  const x=customTemplates.find(v=>v.id===id);
+  if(!x)return;
+
+  if(confirm('Eigenen Baustein „'+x.title+'“ löschen?')){
+    customTemplates=customTemplates.filter(v=>v.id!==id);
+    saveJSON(CUSTOM_TEMPLATE_KEY,customTemplates);
+    loadTradeTemplates();
+  }
+}
+
+function deleteSelectedCustomTemplate(){
+  const sel=document.getElementById('baustein');
+  const o=sel.options[sel.selectedIndex];
+  const id=o&&o.dataset?o.dataset.customId:'';
+  if(!id){
+    alert('Bitte einen eigenen Baustein mit ★ auswählen.');
+    return;
+  }
+  deleteCustomTemplateById(id);
+}
+
+function renderCustomTemplateManager(){
+  const box=document.getElementById('customTemplateManager');
+  if(!box)return;
+
+  const editor=document.getElementById('customTradeSelect');
+  const trade=(editor&&editor.value)||document.getElementById('gewerk').value;
+  const list=customTemplates.filter(x=>!trade||x.trade===trade);
+
+  if(!list.length){
+    box.innerHTML='<p>Für dieses Gewerk sind keine eigenen Bausteine gespeichert.</p>';
+    return;
+  }
+
+  box.innerHTML='';
+  list.forEach(x=>{
+    const row=document.createElement('div');
+    row.style.cssText='border:1px solid #d7dde2;border-radius:10px;padding:10px;margin:8px 0;background:#fafbfc';
+
+    const strong=document.createElement('strong');
+    strong.textContent=x.title;
+
+    const meta=document.createElement('div');
+    meta.textContent='Gewerk: '+x.trade;
+
+    const txt=document.createElement('div');
+    txt.textContent=x.text;
+    txt.style.margin='5px 0';
+
+    const btn=document.createElement('button');
+    btn.type='button';
+    btn.className='red';
+    btn.textContent='Baustein löschen';
+    btn.onclick=()=>deleteCustomTemplateById(x.id);
+
+    row.append(strong,meta,txt,btn);
+    box.appendChild(row);
+  });
+}
+
+function exportCustomTemplates(){
+  if(!customTemplates.length&&!customTrades.length){
+    alert('Keine eigenen Gewerke oder Bausteine vorhanden.');
+    return;
+  }
+
+  const out={
+    appId:'schadenmeldung-custom-templates',
+    formatVersion:2,
+    createdAt:new Date().toISOString(),
+    customTrades,
+    templates:customTemplates
+  };
+
+  const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='Schadenmeldung_Eigene_Gewerke_Bausteine_'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+
 function saveSettings(){saveJSON(SETTINGS_KEY,{to:document.getElementById('mailTo').value.trim(),cc:document.getElementById('mailCc').value.trim()})}
 function loadSettings(){const x=loadJSON(SETTINGS_KEY,{});document.getElementById('mailTo').value=x.to||'';document.getElementById('mailCc').value=x.cc||''}
 function formatDateDE(v){if(!v)return'';const p=v.split('-');return p.length===3?p[2]+'.'+p[1]+'.'+p[0]:v}
