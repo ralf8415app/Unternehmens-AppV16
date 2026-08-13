@@ -44,7 +44,7 @@ hr{border:0;border-top:1px solid #e1e4e8;margin:18px 0}
 <div id="storageStatus" style="background:#fff3cd;border:1px solid #d6b85b;padding:12px 14px;margin:10px;border-radius:10px;font:600 15px Arial,sans-serif;line-height:1.35">Speichertest läuft …</div>
 
 <header>Schaden- & Auftragsmeldung</header>
-<div class="appNav noPrint"><button onclick="location.href='notdienst.html'">Notdienst-App öffnen →</button><button onclick="openHelp()">📘 App-Anleitung DE / EN</button></div>
+<div class="appNav noPrint"><button onclick="location.href='notdienst.html'">Notdienst-App öffnen →</button><button onclick="openHelp()">📘 App-Anleitung DE / EN</button><button onclick="openTestInfo()">ℹ️ Info / Testversion / Datenschutz</button></div>
 <div id="transferNotice" class="note noPrint" style="display:none;margin:12px auto;max-width:1100px;padding:12px 16px;background:#fff3cd;border:1px solid #e6c75b;border-radius:10px"><b>Vom Notdienst übernommen:</b> Angaben wurden in dieses Formular übertragen. Bitte Schadensort, Gewerk und Priorität ergänzen.</div>
 <main>
 <section class="card noPrint">
@@ -72,9 +72,22 @@ hr{border:0;border-top:1px solid #e1e4e8;margin:18px 0}
 <div class="grid2">
 <div><label>Objekt / Straße <span class="req">*</span></label>
 <select id="objekt">
-<option value="">Bitte auswählen</option>
-<option value="4003|Bretzenheimer Str.">4003 – Bretzenheimer Str.</option><option value="4007|Alte Ziegelei">4007 – Alte Ziegelei</option><option value="4008|Ludwigsb. Str.">4008 – Ludwigsb. Str.</option><option value="4009|Zwerchallee 14/16">4009 – Zwerchallee 14/16</option><option value="4010|Wilh.-Quetsch">4010 – Wilh.-Quetsch</option><option value="4011|Wormser Straße 187">4011 – Wormser Straße 187</option><option value="4013|Zwerchallee 8–12 und 18–20">4013 – Zwerchallee 8–12 und 18–20</option><option value="4014|Housing Area">4014 – Housing Area</option><option value="4020|Allianzhaus">4020 – Allianzhaus</option><option value="4024|Hotel Alt Finthen">4024 – Hotel Alt Finthen</option><option value="4025|Hotel Draiser Hof">4025 – Hotel Draiser Hof</option><option value="4026|Heiligkreuzweg">4026 – Heiligkreuzweg</option><option value="4027|Hechtsheimer Str.">4027 – Hechtsheimer Str.</option><option value="4028|Isaac-Fulda">4028 – Isaac-Fulda</option><option value="4029|Layenhof">4029 – Layenhof</option><option value="4030|Bahnhofstr.">4030 – Bahnhofstr.</option><option value="4031|Nikolaus-Kopernikus">4031 – Nikolaus-Kopernikus</option><option value="4032|Zitadelle">4032 – Zitadelle</option><option value="4033|Layenhof 2">4033 – Layenhof 2</option>
-</select></div>
+<option value="">Keine Objektliste geladen</option>
+</select>
+<div class="toolbar noPrint" style="margin-top:8px">
+  <button class="grey" type="button" onclick="document.getElementById('objectImportFile').click()">Objektliste einlesen</button>
+  <button class="orange" type="button" onclick="exportObjectList()">Objektliste exportieren</button>
+  <button class="red" type="button" onclick="deleteObjectList()">Objektliste lokal löschen</button>
+</div>
+<input id="objectImportFile" type="file" accept=".json,application/json" style="display:none" onchange="importObjectList(event)">
+<div id="objectStatus" class="muted" style="margin-top:6px">Keine Objektliste geladen.</div>
+<div class="note noPrint" style="margin-top:8px">
+<b>Wo liegt die Objektdatei?</b><br>
+iPad/iPhone: Die JSON-Datei kann in der App „Dateien“ liegen. Empfohlen: ein freigegebener Ordner wie <b>AuftragsApp / Objektlisten</b>. Sie muss nicht in einem besonderen Systemordner liegen.<br>
+Windows: Empfohlen ist <b>Dokumente\AuftragsApp\Objektlisten</b>. „Downloads“ funktioniert ebenfalls, ist für die dauerhafte Ablage aber weniger übersichtlich.<br>
+Nach erfolgreichem Import liest die App die lokal gespeicherte Objektliste; die JSON-Datei muss nicht bei jedem Start erneut ausgewählt werden.
+</div>
+</div>
 <div><label>Schadensort <span class="req">*</span></label><input id="schadensort" placeholder="z. B. Haus 2, 1. OG, Wohnung 14, Bad"></div>
 </div>
 
@@ -173,9 +186,54 @@ hr{border:0;border-top:1px solid #e1e4e8;margin:18px 0}
 </section>
 <section class="card noPrint" id="rechtliches">
 <h2>Über diese App / Rechtliches</h2>
-<div class="privacyBox"><b>© 2026 Ralf Peter Jung – Alle Rechte vorbehalten.</b><br><br>Diese App ist für die Erfassung und Bearbeitung von Schaden- und Auftragsmeldungen vorgesehen. Eine unerlaubte Vervielfältigung, Weitergabe, Veröffentlichung oder Veränderung der App bzw. ihrer individuellen Inhalte ist nicht gestattet, soweit keine entsprechende Erlaubnis vorliegt.<br><br><b>Datenschutz:</b> Personenbezogene Nutzdaten werden von der App nicht an den Hosting-Server übertragen. Lokale Speicherung erfolgt nur, soweit Browser und Unternehmensrichtlinie dies zulassen. Backup-Dateien sind unverschlüsselte Exportdateien und müssen organisatorisch geschützt abgelegt werden. Beim Laden der Web-App verarbeitet der Hosting-Anbieter technisch notwendige Verbindungsdaten; beim E-Mail-Versand verarbeitet der eingesetzte Maildienst die ausgewählten Inhalte. Verantwortlicher, Rechtsgrundlage, Aufbewahrungsfristen, Berechtigungen und weitere technische/organisatorische Maßnahmen sind vom betreibenden Unternehmen festzulegen.<br><br><b>Version:</b> V18 – Edge Unternehmen / eigene Gewerke & Bausteinverwaltung</div>
+<div class="privacyBox"><b>© 2026 Ralf Peter Jung – Alle Rechte vorbehalten.</b><br><br>Diese App ist für die Erfassung und Bearbeitung von Schaden- und Auftragsmeldungen vorgesehen. Eine unerlaubte Vervielfältigung, Weitergabe, Veröffentlichung oder Veränderung der App bzw. ihrer individuellen Inhalte ist nicht gestattet, soweit keine entsprechende Erlaubnis vorliegt.<br><br><b>Datenschutz:</b> Personenbezogene Nutzdaten werden von der App nicht an den Hosting-Server übertragen. Lokale Speicherung erfolgt nur, soweit Browser und Unternehmensrichtlinie dies zulassen. Backup-Dateien sind unverschlüsselte Exportdateien und müssen organisatorisch geschützt abgelegt werden. Beim Laden der Web-App verarbeitet der Hosting-Anbieter technisch notwendige Verbindungsdaten; beim E-Mail-Versand verarbeitet der eingesetzte Maildienst die ausgewählten Inhalte. Verantwortlicher, Rechtsgrundlage, Aufbewahrungsfristen, Berechtigungen und weitere technische/organisatorische Maßnahmen sind vom betreibenden Unternehmen festzulegen.<br><br><b>Version:</b> V21 – Interne Testversion / Datenschutz-Hinweis</div>
 </section>
 </main>
+
+
+<div id="testInfoOverlay" class="helpOverlay noPrint" onclick="if(event.target===this)closeTestInfo()">
+<div class="helpBox">
+<h2>Info / Testversion / Datenschutz</h2>
+
+<p><b>Wichtiger Hinweis:</b> Dieser Hinweis dokumentiert den internen Testcharakter der Anwendung. Er ersetzt keine betriebliche Freigabe, keine Datenschutzprüfung, keine Rechtsgrundlage und keine sonstigen erforderlichen betrieblichen oder datenschutzrechtlichen Prüfungen.</p>
+
+<h3>Interne Testversion – Hinweis zur Nutzung</h3>
+<p><b>Status der Anwendung:</b> Interne Test- und Pilotversion</p>
+
+<p>Diese Anwendung wurde als digitale Arbeitshilfe für die praktische Erprobung von Arbeitsabläufen entwickelt. Sie befindet sich derzeit im internen Testbetrieb und ist nicht als allgemein freigegebene kommerzielle Softwareversion gekennzeichnet.</p>
+
+<h3>Datenschutz und Speicherung</h3>
+<p>Die Anwendung ist darauf ausgelegt, betriebliche und personenbezogene Daten möglichst ausschließlich lokal auf dem verwendeten Endgerät zu verarbeiten.</p>
+<p>Sofern keine Funktion ausdrücklich durch den Benutzer zum Export oder zur Weitergabe verwendet wird, sollen keine eingegebenen Arbeits-, Mitarbeiter-, Objekt-, Foto-, Prüf- oder sonstigen Nutzdaten automatisch an externe Server übertragen werden.</p>
+<p>Die Anwendung selbst soll keine Analyse-, Tracking- oder Werbedienste verwenden.</p>
+<p>Für sensible oder personenbezogene Informationen dürfen ausschließlich die betrieblich vorgesehenen und zulässigen Daten verwendet werden.</p>
+
+<h3>Verantwortung für Eingaben</h3>
+<p>Jeder Benutzer ist für die sachliche Richtigkeit und Vollständigkeit seiner eigenen Eingaben verantwortlich.</p>
+<p>Die Anwendung unterstützt die Dokumentation von Arbeitsabläufen, ersetzt jedoch keine gesetzlich vorgeschriebenen Prüfungen, fachlichen Entscheidungen, betrieblichen Anweisungen oder erforderlichen Freigaben.</p>
+
+<h3>Datensicherung</h3>
+<p>Lokal gespeicherte Daten können bei Verlust, Beschädigung, Austausch oder Zurücksetzen des Endgerätes verloren gehen.</p>
+<p>Sofern die Anwendung eine Sicherungs- oder Exportfunktion bereitstellt, sollen wichtige Daten regelmäßig entsprechend den betrieblichen Vorgaben gesichert werden.</p>
+
+<h3>Testbetrieb und technische Änderungen</h3>
+<p>Da es sich um eine Testversion handelt, können Funktionen geändert, ergänzt oder korrigiert werden.</p>
+<p>Bei technischen Fehlern, unerwartetem Verhalten oder Problemen mit gespeicherten Daten sollte die weitere Nutzung der betroffenen Funktion bis zur Klärung unterbrochen werden.</p>
+<p>Fehler und Verbesserungsvorschläge sollen dem für den Testbetrieb zuständigen Ansprechpartner mitgeteilt werden.</p>
+
+<h3>Kein automatischer Datenaustausch</h3>
+<p>Die Anwendung soll im regulären Betrieb keine automatische Übertragung von Nutzdaten an externe Dienste durchführen.</p>
+<p>Eine Weitergabe von Daten erfolgt nur durch eine ausdrücklich vom Benutzer ausgelöste Funktion, beispielsweise Export, Ausdruck, Speicherung oder Weitergabe einer erzeugten Datei.</p>
+
+<h3>Zweck der Testversion</h3>
+<p>Ziel des Testbetriebs ist es, zu prüfen, ob die digitale Anwendung Arbeitsabläufe vereinfacht, Papierdokumentation reduziert und die praktische Durchführung und Dokumentation von Aufgaben unterstützt.</p>
+
+<hr>
+<p><b>Version:</b> Interne Testversion<br>
+<b>Nutzung:</b> ausschließlich für den vorgesehenen internen Testbetrieb</p>
+
+<button onclick="closeTestInfo()">Info schließen</button>
+</div></div>
 
 <div id="helpOverlay" class="helpOverlay noPrint" onclick="if(event.target===this)closeHelp()">
 <div class="helpBox">
@@ -186,7 +244,13 @@ hr{border:0;border-top:1px solid #e1e4e8;margin:18px 0}
 <p><b>Windows mit Microsoft Edge:</b> App-Adresse öffnen. Wenn Edge die Installation anbietet, das App-Symbol in der Adressleiste verwenden. Alternativ: Menü (…) → Apps → Diese Website als App installieren. Danach kann die App über Startmenü, Taskleiste oder Desktop-Verknüpfung geöffnet werden.</p>
 <h3>2. Erster Start und Mitarbeiter</h3>
 <p>Speicherstatus prüfen. Unter „Mitarbeiter lokal verwalten“ Name und Rolle eingeben und „Mitarbeiter lokal speichern“ wählen. Namen sind nicht fest im Programm hinterlegt. Bei erlaubtem Edge-Speicher bleibt der Eintrag auf diesem Gerät erhalten.</p>
-<h3>3. Schaden/Auftrag erfassen</h3>
+<h3>3. Objektliste separat einlesen</h3>
+<p>Die App enthält keine feste Objekt- oder Adressliste. Die Objektliste kommt aus einer separaten JSON-Datei.</p>
+<p><b>iPad/iPhone:</b> Die Objektdatei zuerst in der Apple-App „Dateien“ ablegen. Empfohlen ist ein vom Unternehmen freigegebener Ordner, z. B. <b>AuftragsApp → Objektlisten</b>. Die Datei kann technisch auch unter „Downloads“ oder an einem anderen in „Dateien“ sichtbaren Ort liegen; ein besonderer App-Ordner ist nicht erforderlich. In der App anschließend <b>„Objektliste einlesen“</b> drücken, die Dateiauswahl öffnen, zum Ordner navigieren und die JSON-Datei auswählen.</p>
+<p><b>Windows / Edge:</b> Empfohlen ist z. B. <b>Dokumente\AuftragsApp\Objektlisten</b>. Die Datei kann auch in „Downloads“ liegen. In der App <b>„Objektliste einlesen“</b> drücken, im Windows-Dateiauswahldialog den Ordner öffnen und die JSON-Datei auswählen.</p>
+<p>Nach dem Import zeigt die App die Anzahl der geladenen Objekte an. Wenn Edge lokalen Speicher zulässt, wird die Liste auf diesem Gerät gespeichert und von Schadensmeldung und Notdienst gemeinsam verwendet. Die ursprüngliche JSON-Datei muss dann nicht bei jedem Start erneut ausgewählt werden. <b>„Objektliste exportieren“</b> erstellt wieder eine separate Objektdatei; <b>„Objektliste lokal löschen“</b> entfernt nur die lokal eingelesene Liste. Die Objektliste ist nicht Bestandteil der normalen Schadensmeldungs- oder Notdienst-Sicherung.</p>
+<p><b>Firmen-Gerät:</b> Nur einen vom Unternehmen freigegebenen Speicherort verwenden. iCloud Drive, OneDrive oder andere Cloudspeicher nur verwenden, wenn sie betrieblich freigegeben sind.</p>
+<h3>4. Schaden/Auftrag erfassen</h3>
 <p>Datum, Mitarbeiter, Melder, Priorität, Gewerk, Objekt/Straße und Schadensort auswählen bzw. eingeben. Danach einen vorhandenen Textbaustein wählen oder den Auftrag frei schreiben. Pflichtfelder sind mit * gekennzeichnet.</p>
 <h3>4. Eigene Textbausteine</h3>
 <p>Vorhandenes Gewerk auswählen oder direkt im Baustein-Editor ein eigenes Gewerk anlegen. Danach Kurzbezeichnung und Auftragstext eingeben und lokal speichern. Eigene Bausteine können einzeln gelöscht werden. Eigene Gewerke können gelöscht werden, sobald keine eigenen Bausteine mehr dazu gespeichert sind. Der Export enthält ausschließlich eigene Gewerke und eigene Bausteine.</p>
@@ -199,7 +263,7 @@ hr{border:0;border-top:1px solid #e1e4e8;margin:18px 0}
 <h3>8. Gespeicherte Meldungen</h3>
 <p>Unten können Meldungen gesucht, nach Status gefiltert, bearbeitet, erneut per Mail vorbereitet, Fotos geteilt oder einzelne Meldungen gelöscht werden. „Alle Aufträge löschen“ entfernt alle Schadensmeldungen und zugehörigen lokal gespeicherten Fotos.</p>
 <h3>9. Datensicherung – Schadensmeldung</h3>
-<p>„Schadensmeldung sichern“ erstellt ausschließlich ein Backup dieser Schadensmeldungs-App: Aufträge, lokale Mitarbeiter, E-Mail-Einstellungen, eigene Bausteine und gespeicherte Fotos. Die Notdienst-Daten gehören nicht in dieses Backup. Die Datei ist nicht zusätzlich verschlüsselt und muss in einem vom Unternehmen freigegebenen, geschützten Speicher abgelegt werden.</p>
+<p>„Schadensmeldung sichern“ erstellt ausschließlich ein Backup dieser Schadensmeldungs-App: Aufträge, lokale Mitarbeiter, E-Mail-Einstellungen, eigene Bausteine und gespeicherte Fotos. Die Notdienst-Daten und die separate lokale Objektliste gehören nicht in dieses Backup. Die Datei ist nicht zusätzlich verschlüsselt und muss in einem vom Unternehmen freigegebenen, geschützten Speicher abgelegt werden.</p>
 <h3>10. Backup wiederherstellen / Versionswechsel</h3>
 <p>Vor einem Update zuerst eine Sicherung erstellen. Neue Version öffnen und „Schadensmeldung wiederherstellen“ wählen. Nur eine passende Schadensmeldungs-Sicherung verwenden. Beim Wiederherstellen können vorhandene lokale Daten ersetzt werden; deshalb vorher zusätzlich sichern.</p>
 <h3>11. CSV, Drucken und PDF</h3>
@@ -217,7 +281,13 @@ hr{border:0;border-top:1px solid #e1e4e8;margin:18px 0}
 <p><b>Windows with Microsoft Edge:</b> Open the app address. If Edge offers installation, use the app icon in the address bar. Alternatively choose (…) → Apps → Install this site as an app. The app can then be opened from Start, the taskbar, or a desktop shortcut.</p>
 <h3>2. First start and employee</h3>
 <p>Check the storage status. Under “Mitarbeiter lokal verwalten”, enter the employee name and role and save it locally. Employee names are not hard-coded in the application. If Edge storage is permitted, the entry remains on this device.</p>
-<h3>3. Create a damage/work order</h3>
+<h3>3. Import the separate property list</h3>
+<p>The app contains no hard-coded property or address list. Properties are supplied in a separate JSON file.</p>
+<p><b>iPad/iPhone:</b> Store the JSON file in the Apple Files app. A company-approved folder such as <b>AuftragsApp → Objektlisten</b> is recommended. No special system folder is required. In the app tap <b>“Objektliste einlesen”</b>, browse to the folder and select the JSON file.</p>
+<p><b>Windows / Edge:</b> A folder such as <b>Documents\AuftragsApp\Objektlisten</b> is recommended. Downloads also works. Click <b>“Objektliste einlesen”</b>, browse to the folder in the Windows file picker and select the JSON file.</p>
+<p>After import, the app displays the number of loaded properties. If Edge local storage is allowed, the list remains stored on that device and is shared by the damage and emergency-duty areas. The original JSON file does not need to be selected on every start. <b>“Objektliste exportieren”</b> creates a separate property-list file; <b>“Objektliste lokal löschen”</b> removes only the locally imported list. The property list is not included in the normal damage or emergency-duty backups.</p>
+<p><b>Managed company device:</b> Use only a company-approved storage location. Use iCloud Drive, OneDrive or another cloud service only if company policy permits it.</p>
+<h3>4. Create a damage/work order</h3>
 <p>Select or enter date, employee, reporter, priority, trade, property/street and damage location. Then select a prepared text block or enter the work description manually. Fields marked * are mandatory.</p>
 <h3>4. Custom text blocks</h3>
 <p>Select an existing trade or create a custom trade directly in the text-block editor. Enter a short title and work-order text and save locally. Custom blocks can be deleted individually; custom trades can be deleted after their custom blocks have been removed. The export contains only custom trades and custom text blocks.</p>
@@ -245,6 +315,8 @@ hr{border:0;border-top:1px solid #e1e4e8;margin:18px 0}
 
 <script>
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+function openTestInfo(){document.getElementById('testInfoOverlay').style.display='block';document.body.style.overflow='hidden';}
+function closeTestInfo(){document.getElementById('testInfoOverlay').style.display='none';document.body.style.overflow='';}
 function openHelp(){document.getElementById('helpOverlay').style.display='block';document.body.style.overflow='hidden';}
 function closeHelp(){document.getElementById('helpOverlay').style.display='none';document.body.style.overflow='';}
 const STORAGE_KEY='schaden_auftraege_v1';
@@ -252,6 +324,7 @@ const SETTINGS_KEY='schaden_mail_settings_v1';
 const EMPLOYEE_KEY='schaden_mitarbeiter_lokal_v1';
 const CUSTOM_TEMPLATE_KEY='schaden_eigene_bausteine_v1';
 const CUSTOM_TRADE_KEY='schaden_eigene_gewerke_v1';
+const OBJECT_LIST_KEY='arbeitszentrale_objektliste_v1';
 let entries=loadJSON(STORAGE_KEY,[]), employees=loadJSON(EMPLOYEE_KEY,[]), customTemplates=loadJSON(CUSTOM_TEMPLATE_KEY,[]), customTrades=loadJSON(CUSTOM_TRADE_KEY,[]), editIndex=-1;
 let currentPhotos=[]; // {id,name,type,blob,url?} nur im Arbeitsspeicher; dauerhaft in IndexedDB
 const PHOTO_DB='schaden_fotos_v1', PHOTO_STORE='photos';
@@ -367,6 +440,7 @@ function applyNotdienstTransfer(){
   setKW();
   if(x.objekt){
     const val=x.objekt+'|'+(x.strasse||'');
+    ensureHistoricalObjectOption(val);
     const sel=document.getElementById('objekt');
     for(let i=0;i<sel.options.length;i++){if(sel.options[i].value===val){sel.selectedIndex=i;break}}
   }
@@ -382,11 +456,122 @@ function applyNotdienstTransfer(){
   updatePreview();
   window.scrollTo({top:0,behavior:'smooth'});
 }
-async function init(){await testIndexedDB();updateStorageStatus();entries=loadJSON(STORAGE_KEY,[]);employees=loadJSON(EMPLOYEE_KEY,[]);customTemplates=loadJSON(CUSTOM_TEMPLATE_KEY,[]);const d=new Date();document.getElementById('datum').value=d.toISOString().slice(0,10);setKW();loadSettings();renderEmployees();renderCurrentPhotos();applyNotdienstTransfer();updatePreview();await render();}
+async function init(){await testIndexedDB();updateStorageStatus();entries=loadJSON(STORAGE_KEY,[]);employees=loadJSON(EMPLOYEE_KEY,[]);customTemplates=loadJSON(CUSTOM_TEMPLATE_KEY,[]);customTrades=loadJSON(CUSTOM_TRADE_KEY,[]);objectList=loadObjectList();const d=new Date();document.getElementById('datum').value=d.toISOString().slice(0,10);setKW();loadSettings();renderEmployees();refreshTradeOptions();loadTradeTemplates();renderObjectList();renderCurrentPhotos();applyNotdienstTransfer();updatePreview();await render();}
 window.addEventListener('load',init);
 function setRole(){const p=document.getElementById('mitarbeiter').value.split('|');document.getElementById('rolle').value=p[1]||'';updatePreview()}
 function isoWeek(dateString){const d=new Date(dateString+'T12:00:00');const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const day=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-day);const y=new Date(Date.UTC(t.getUTCFullYear(),0,1));return Math.ceil((((t-y)/86400000)+1)/7)}
 function setKW(){const d=document.getElementById('datum').value;document.getElementById('kw').value=d?String(isoWeek(d)).padStart(2,'0'):'';updatePreview()}
+
+let SESSION_OBJECTS=[];
+let objectList=loadObjectList();
+
+function normalizeObjectList(data){
+  if(!data || data.appId!=='schadenmeldung-objekte' || Number(data.formatVersion)!==1 || !Array.isArray(data.objekte)){
+    throw new Error('wrong-format');
+  }
+  const out=[], ids=new Set();
+  for(const raw of data.objekte){
+    if(!raw || typeof raw!=='object') continue;
+    const id=String(raw.id||'').trim();
+    const strasse=String(raw.strasse||'').trim();
+    if(!id || ids.has(id)) continue;
+    ids.add(id);
+    out.push({id,strasse});
+  }
+  if(!out.length) throw new Error('empty');
+  return out;
+}
+function loadObjectList(){
+  try{
+    if(LOCAL_STORAGE_OK){
+      const raw=localStorage.getItem(OBJECT_LIST_KEY);
+      if(!raw) return [];
+      const parsed=JSON.parse(raw);
+      return Array.isArray(parsed)?parsed:[];
+    }
+  }catch(e){}
+  return SESSION_OBJECTS.slice();
+}
+function saveObjectList(){
+  try{
+    if(LOCAL_STORAGE_OK){
+      localStorage.setItem(OBJECT_LIST_KEY,JSON.stringify(objectList));
+      return true;
+    }
+  }catch(e){}
+  SESSION_OBJECTS=objectList.slice();
+  return false;
+}
+function renderObjectList(selectedValue){
+  const sel=document.getElementById('objekt');
+  if(!sel)return;
+  const previous=selectedValue!==undefined?selectedValue:sel.value;
+  sel.innerHTML='';
+  const first=document.createElement('option');
+  first.value='';
+  first.textContent=objectList.length?'Bitte auswählen':'Keine Objektliste geladen';
+  sel.appendChild(first);
+  objectList.forEach(x=>{
+    const o=document.createElement('option');
+    o.value=x.id+'|'+x.strasse;
+    o.textContent=x.strasse?x.id+' – '+x.strasse:x.id;
+    sel.appendChild(o);
+  });
+  if(previous && [...sel.options].some(o=>o.value===previous)) sel.value=previous;
+  const st=document.getElementById('objectStatus');
+  if(st) st.textContent=objectList.length
+    ? objectList.length+' Objekt(e) lokal geladen. Diese Liste ist nicht Bestandteil des App-Codes oder der normalen App-Backups.'
+    : 'Keine Objektliste geladen.';
+}
+async function importObjectList(ev){
+  const input=ev.target;
+  const file=input.files&&input.files[0];
+  input.value='';
+  if(!file)return;
+  try{
+    const data=JSON.parse(await file.text());
+    const parsed=normalizeObjectList(data);
+    if(!confirm(parsed.length+' Objekt(e) aus dieser Datei lokal übernehmen? Eine vorhandene lokale Objektliste wird ersetzt.'))return;
+    objectList=parsed;
+    const persistent=saveObjectList();
+    renderObjectList();
+    alert(persistent
+      ? 'Objektliste wurde ausschließlich lokal auf diesem Gerät gespeichert.'
+      : 'Objektliste ist geladen, kann wegen der Unternehmensrichtlinie aber nur während dieser geöffneten Sitzung gehalten werden.');
+  }catch(e){
+    alert('Ungültige Objektdatei. Erwartet wird eine JSON-Datei mit appId „schadenmeldung-objekte“, formatVersion 1 und einer Objektliste.');
+  }
+}
+function exportObjectList(){
+  if(!objectList.length){alert('Keine lokale Objektliste vorhanden.');return;}
+  const out={appId:'schadenmeldung-objekte',formatVersion:1,createdAt:new Date().toISOString(),objekte:objectList};
+  const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='Objektliste_'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function deleteObjectList(){
+  if(!objectList.length){alert('Keine lokale Objektliste vorhanden.');return;}
+  if(!confirm('Lokale Objektliste auf diesem Gerät löschen? Bereits gespeicherte Schadensmeldungen werden dadurch nicht gelöscht.'))return;
+  objectList=[];
+  SESSION_OBJECTS=[];
+  try{if(LOCAL_STORAGE_OK)localStorage.removeItem(OBJECT_LIST_KEY)}catch(e){}
+  renderObjectList();
+}
+function ensureHistoricalObjectOption(value){
+  const sel=document.getElementById('objekt');
+  if(!sel||!value)return;
+  if([...sel.options].some(o=>o.value===value))return;
+  const parts=value.split('|');
+  const o=document.createElement('option');
+  o.value=value;
+  o.textContent=(parts[0]||'Historisches Objekt')+(parts[1]?' – '+parts.slice(1).join('|'):'')+' (nur aus gespeichertem Auftrag)';
+  o.dataset.historical='1';
+  sel.appendChild(o);
+}
+
 function refreshTradeOptions(){
   const main=document.getElementById('gewerk');
   const editor=document.getElementById('customTradeSelect');
@@ -674,7 +859,7 @@ async function saveOnly(){const e=await persistCurrent();if(e){alert((LOCAL_STOR
 async function saveAndMail(){const e=await persistCurrent();if(!e)return;saveSettings();const to=document.getElementById('mailTo').value.trim(),cc=document.getElementById('mailCc').value.trim();let url='mailto:'+encodeURIComponent(to)+'?subject='+encodeURIComponent(buildSubject(e))+'&body='+encodeURIComponent(buildMailBody(e));if(cc)url+='&cc='+encodeURIComponent(cc);window.location.href=url;resetForm(false)}
 async function copyMailText(){const txt=buildMailBody(formData());try{await navigator.clipboard.writeText(txt);alert('Meldetext kopiert.')}catch(e){const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();alert('Meldetext kopiert.')}}
 function resetForm(keepDate=true){editIndex=-1;const date=keepDate?document.getElementById('datum').value:new Date().toISOString().slice(0,10);['mitarbeiter','melder','prioritaet','gewerk','objekt'].forEach(id=>document.getElementById(id).value='');document.getElementById('rolle').value='';document.getElementById('status').value='Offen';document.getElementById('schadensort').value='';document.getElementById('schaden').value='';document.getElementById('versicherung').checked=false;document.getElementById('versicherungText').value='';toggleInsurance();currentPhotos=[];renderCurrentPhotos();document.getElementById('datum').value=date;setKW();loadTradeTemplates();updatePreview();window.scrollTo({top:0,behavior:'smooth'})}
-async function loadEntry(i){const e=entries[i];if(!e)return;editIndex=i;document.getElementById('datum').value=e.datum;setKW();document.getElementById('melder').value=e.melder;document.getElementById('prioritaet').value=e.prioritaet;document.getElementById('gewerk').value=e.gewerk;loadTradeTemplates();document.getElementById('status').value=e.status||'Offen';document.getElementById('objekt').value=e.objekt+'|'+e.strasse;document.getElementById('schadensort').value=e.schadensort;document.getElementById('schaden').value=e.schaden;document.getElementById('versicherung').checked=!!e.versicherung;document.getElementById('versicherungText').value=e.versicherungText||'';toggleInsurance();const s=document.getElementById('mitarbeiter');let found=false;for(let x=0;x<s.options.length;x++){if(s.options[x].value.split('|')[0]===e.monteur){s.selectedIndex=x;found=true;break}}if(!found&&e.monteur){const o=document.createElement('option');o.value=e.monteur+'|'+(e.rolle||'');o.textContent=e.monteur;s.appendChild(o);s.value=o.value}setRole();await loadCurrentPhotos(e.id);updatePreview();window.scrollTo({top:0,behavior:'smooth'})}
+async function loadEntry(i){const e=entries[i];if(!e)return;editIndex=i;document.getElementById('datum').value=e.datum;setKW();document.getElementById('melder').value=e.melder;document.getElementById('prioritaet').value=e.prioritaet;document.getElementById('gewerk').value=e.gewerk;loadTradeTemplates();document.getElementById('status').value=e.status||'Offen';const objectValue=e.objekt+'|'+e.strasse;ensureHistoricalObjectOption(objectValue);document.getElementById('objekt').value=objectValue;document.getElementById('schadensort').value=e.schadensort;document.getElementById('schaden').value=e.schaden;document.getElementById('versicherung').checked=!!e.versicherung;document.getElementById('versicherungText').value=e.versicherungText||'';toggleInsurance();const s=document.getElementById('mitarbeiter');let found=false;for(let x=0;x<s.options.length;x++){if(s.options[x].value.split('|')[0]===e.monteur){s.selectedIndex=x;found=true;break}}if(!found&&e.monteur){const o=document.createElement('option');o.value=e.monteur+'|'+(e.rolle||'');o.textContent=e.monteur;s.appendChild(o);s.value=o.value}setRole();await loadCurrentPhotos(e.id);updatePreview();window.scrollTo({top:0,behavior:'smooth'})}
 function mailEntry(i){const e=entries[i];if(!e)return;const to=document.getElementById('mailTo').value.trim(),cc=document.getElementById('mailCc').value.trim();let url='mailto:'+encodeURIComponent(to)+'?subject='+encodeURIComponent(buildSubject(e))+'&body='+encodeURIComponent(buildMailBody(e));if(cc)url+='&cc='+encodeURIComponent(cc);window.location.href=url}
 async function deleteEntry(i){if(confirm('Diesen Auftrag einschließlich lokal gespeicherter Fotos löschen?')){const e=entries[i];if(e)await deletePhotosForEntry(e.id);entries.splice(i,1);saveJSON(STORAGE_KEY,entries);render()}}
 async function render(){const body=document.querySelector('#tbl tbody'),q=(document.getElementById('search')?.value||'').toLowerCase(),sf=document.getElementById('statusFilter')?.value||'';body.innerHTML='';let shown=0;for(let i=0;i<entries.length;i++){const e=entries[i];const hay=[e.datum,e.objekt,e.strasse,e.schadensort,e.gewerk,e.prioritaet,e.melder,e.schaden,e.status,e.monteur].join(' ').toLowerCase();if(q&&!hay.includes(q))continue;if(sf&&e.status!==sf)continue;shown++;const tr=document.createElement('tr');const pc=await countPhotosForEntry(e.id);e.photoCount=pc;[formatDateDE(e.datum),e.objekt+' – '+e.strasse,e.schadensort,e.gewerk,e.prioritaet,e.melder,e.schaden,String(pc),e.status,e.monteur].forEach(v=>{const td=document.createElement('td');td.textContent=v||'';tr.appendChild(td)});const a=document.createElement('td');a.className='noPrint';[['Bearbeiten','grey',()=>loadEntry(i)],['Mail','green',()=>mailEntry(i)],['Fotos teilen','orange',()=>shareEntryPhotos(i)],['Löschen','red',()=>deleteEntry(i)]].forEach(x=>{const b=document.createElement('button');b.textContent=x[0];b.className='small '+x[1];b.onclick=x[2];a.appendChild(b)});tr.appendChild(a);body.appendChild(tr)}document.getElementById('count').textContent=shown+' / '+entries.length}

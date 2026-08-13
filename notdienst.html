@@ -68,27 +68,21 @@ th{background:#dfeaf2}
 <br>
 <label>Objekt / Straße <span class="req">*</span></label>
 <select id="objekt">
-<option value="">Bitte auswählen</option>
-<option value="4003|Bretzenheimer Str.">4003 – Bretzenheimer Str.</option>
-<option value="4007|Alte Ziegelei">4007 – Alte Ziegelei</option>
-<option value="4008|Ludwigsb. Str.">4008 – Ludwigsb. Str.</option>
-<option value="4009|Zwerchallee 14/16">4009 – Zwerchallee 14/16</option>
-<option value="4010|Wilh.-Quetsch">4010 – Wilh.-Quetsch</option>
-<option value="4011|Wormser Straße 187">4011 – Wormser Straße 187</option>
-<option value="4013|Zwerchallee 8–12 und 18–20">4013 – Zwerchallee 8–12 und 18–20</option>
-<option value="4014|Housing Area">4014 – Housing Area</option>
-<option value="4020|Allianzhaus">4020 – Allianzhaus</option>
-<option value="4024|Hotel Alt Finthen">4024 – Hotel Alt Finthen</option>
-<option value="4025|Hotel Draiser Hof">4025 – Hotel Draiser Hof</option>
-<option value="4026|Heiligkreuzweg">4026 – Heiligkreuzweg</option>
-<option value="4027|Hechtsheimer Str.">4027 – Hechtsheimer Str.</option>
-<option value="4028|Isaac-Fulda">4028 – Isaac-Fulda</option>
-<option value="4029|Layenhof">4029 – Layenhof</option>
-<option value="4030|Bahnhofstr.">4030 – Bahnhofstr.</option>
-<option value="4031|Nikolaus-Kopernikus">4031 – Nikolaus-Kopernikus</option>
-<option value="4032|Zitadelle">4032 – Zitadelle</option>
-<option value="4033|Layenhof 2">4033 – Layenhof 2</option>
+<option value="">Keine Objektliste geladen</option>
 </select>
+<div class="toolbar noPrint" style="margin-top:8px">
+  <button class="grey" type="button" onclick="document.getElementById('objectImportFile').click()">Objektliste einlesen</button>
+  <button class="orange" type="button" onclick="exportObjectList()">Objektliste exportieren</button>
+  <button class="red" type="button" onclick="deleteObjectList()">Objektliste lokal löschen</button>
+</div>
+<input id="objectImportFile" type="file" accept=".json,application/json" style="display:none" onchange="importObjectList(event)">
+<div id="objectStatus" class="muted" style="margin-top:6px">Keine Objektliste geladen.</div>
+<div class="note noPrint" style="margin-top:8px">
+<b>Wo liegt die Objektdatei?</b><br>
+iPad/iPhone: Die JSON-Datei kann in der App „Dateien“ liegen. Empfohlen: ein freigegebener Ordner wie <b>AuftragsApp / Objektlisten</b>. Sie muss nicht in einem besonderen Systemordner liegen.<br>
+Windows: Empfohlen ist <b>Dokumente\AuftragsApp\Objektlisten</b>. „Downloads“ funktioniert ebenfalls, ist für die dauerhafte Ablage aber weniger übersichtlich.<br>
+Nach erfolgreichem Import liest die App die lokal gespeicherte Objektliste; die JSON-Datei muss nicht bei jedem Start erneut ausgewählt werden.
+</div>
 
 <br><br>
 <label>Textbaustein</label>
@@ -147,6 +141,7 @@ th{background:#dfeaf2}
 <button class="damage" onclick="sendCurrentToDamage()">Schaden beauftragen</button>
 <button class="grey" onclick="location.href='index.html'">← Zur Schadenmeldung</button>
 <button class="help" onclick="openHelp()">App-Anleitung öffnen</button>
+<button class="help" onclick="openTestInfo()">Info / Testversion / Datenschutz</button>
 </div>
 
 </section>
@@ -170,6 +165,51 @@ Eine Datenübertragung erfolgt nur, wenn der Benutzer selbst eine externe Funkti
 </section>
 </main>
 
+
+<div id="testInfoOverlay" class="helpOverlay noPrint" onclick="if(event.target===this)closeTestInfo()">
+<div class="helpBox">
+<h2>Info / Testversion / Datenschutz</h2>
+
+<p><b>Wichtiger Hinweis:</b> Dieser Hinweis dokumentiert den internen Testcharakter der Anwendung. Er ersetzt keine betriebliche Freigabe, keine Datenschutzprüfung, keine Rechtsgrundlage und keine sonstigen erforderlichen betrieblichen oder datenschutzrechtlichen Prüfungen.</p>
+
+<h3>Interne Testversion – Hinweis zur Nutzung</h3>
+<p><b>Status der Anwendung:</b> Interne Test- und Pilotversion</p>
+
+<p>Diese Anwendung wurde als digitale Arbeitshilfe für die praktische Erprobung von Arbeitsabläufen entwickelt. Sie befindet sich derzeit im internen Testbetrieb und ist nicht als allgemein freigegebene kommerzielle Softwareversion gekennzeichnet.</p>
+
+<h3>Datenschutz und Speicherung</h3>
+<p>Die Anwendung ist darauf ausgelegt, betriebliche und personenbezogene Daten möglichst ausschließlich lokal auf dem verwendeten Endgerät zu verarbeiten.</p>
+<p>Sofern keine Funktion ausdrücklich durch den Benutzer zum Export oder zur Weitergabe verwendet wird, sollen keine eingegebenen Arbeits-, Mitarbeiter-, Objekt-, Foto-, Prüf- oder sonstigen Nutzdaten automatisch an externe Server übertragen werden.</p>
+<p>Die Anwendung selbst soll keine Analyse-, Tracking- oder Werbedienste verwenden.</p>
+<p>Für sensible oder personenbezogene Informationen dürfen ausschließlich die betrieblich vorgesehenen und zulässigen Daten verwendet werden.</p>
+
+<h3>Verantwortung für Eingaben</h3>
+<p>Jeder Benutzer ist für die sachliche Richtigkeit und Vollständigkeit seiner eigenen Eingaben verantwortlich.</p>
+<p>Die Anwendung unterstützt die Dokumentation von Arbeitsabläufen, ersetzt jedoch keine gesetzlich vorgeschriebenen Prüfungen, fachlichen Entscheidungen, betrieblichen Anweisungen oder erforderlichen Freigaben.</p>
+
+<h3>Datensicherung</h3>
+<p>Lokal gespeicherte Daten können bei Verlust, Beschädigung, Austausch oder Zurücksetzen des Endgerätes verloren gehen.</p>
+<p>Sofern die Anwendung eine Sicherungs- oder Exportfunktion bereitstellt, sollen wichtige Daten regelmäßig entsprechend den betrieblichen Vorgaben gesichert werden.</p>
+
+<h3>Testbetrieb und technische Änderungen</h3>
+<p>Da es sich um eine Testversion handelt, können Funktionen geändert, ergänzt oder korrigiert werden.</p>
+<p>Bei technischen Fehlern, unerwartetem Verhalten oder Problemen mit gespeicherten Daten sollte die weitere Nutzung der betroffenen Funktion bis zur Klärung unterbrochen werden.</p>
+<p>Fehler und Verbesserungsvorschläge sollen dem für den Testbetrieb zuständigen Ansprechpartner mitgeteilt werden.</p>
+
+<h3>Kein automatischer Datenaustausch</h3>
+<p>Die Anwendung soll im regulären Betrieb keine automatische Übertragung von Nutzdaten an externe Dienste durchführen.</p>
+<p>Eine Weitergabe von Daten erfolgt nur durch eine ausdrücklich vom Benutzer ausgelöste Funktion, beispielsweise Export, Ausdruck, Speicherung oder Weitergabe einer erzeugten Datei.</p>
+
+<h3>Zweck der Testversion</h3>
+<p>Ziel des Testbetriebs ist es, zu prüfen, ob die digitale Anwendung Arbeitsabläufe vereinfacht, Papierdokumentation reduziert und die praktische Durchführung und Dokumentation von Aufgaben unterstützt.</p>
+
+<hr>
+<p><b>Version:</b> Interne Testversion<br>
+<b>Nutzung:</b> ausschließlich für den vorgesehenen internen Testbetrieb</p>
+
+<button onclick="closeTestInfo()">Info schließen</button>
+</div></div>
+
 <div id="helpOverlay" class="helpOverlay noPrint" onclick="if(event.target===this)closeHelp()">
 <div class="helpBox">
 <h2>Komplette App-Anleitung – Notdienst Asyl</h2>
@@ -177,7 +217,12 @@ Eine Datenübertragung erfolgt nur, wenn der Benutzer selbst eine externe Funkti
 <h3>1. Öffnen / Home-Bildschirm / Windows-App</h3>
 <p><b>iPad/iPhone Edge:</b> App in Edge öffnen und über Teilen/Browsermenü „Zum Home-Bildschirm“ wählen, sofern angeboten. Fehlt die Option, als Edge-Favorit verwenden. <b>Windows Edge:</b> (…) → Apps → Diese Website als App installieren bzw. das Installationssymbol in der Adressleiste verwenden.</p>
 <h3>2. Mitarbeiter lokal anlegen</h3><p>Name und Rolle im Bereich Mitarbeiter eingeben und lokal speichern. Es stehen keine festen Mitarbeiternamen im Server-Code.</p>
-<h3>3. Einsatz erfassen</h3><p>KW, Datum, Uhrzeit von/bis, Mitarbeiter, Melder, Objekt/Straße und Schadensmeldung ausfüllen. Stunden werden automatisch berechnet. Vorhandene Textbausteine können eingefügt und anschließend angepasst werden.</p>
+<h3>3. Objektliste separat einlesen</h3><p>Die App enthält keine feste Objekt- oder Adressliste. Die Objektliste kommt aus einer separaten JSON-Datei.</p>
+<p><b>iPad/iPhone:</b> Die Objektdatei zuerst in der Apple-App „Dateien“ ablegen. Empfohlen ist ein vom Unternehmen freigegebener Ordner, z. B. <b>AuftragsApp → Objektlisten</b>. Die Datei kann technisch auch unter „Downloads“ oder an einem anderen in „Dateien“ sichtbaren Ort liegen; ein besonderer App-Ordner ist nicht erforderlich. In der App anschließend <b>„Objektliste einlesen“</b> drücken, die Dateiauswahl öffnen, zum Ordner navigieren und die JSON-Datei auswählen.</p>
+<p><b>Windows / Edge:</b> Empfohlen ist z. B. <b>Dokumente\AuftragsApp\Objektlisten</b>. Die Datei kann auch in „Downloads“ liegen. In der App <b>„Objektliste einlesen“</b> drücken, im Windows-Dateiauswahldialog den Ordner öffnen und die JSON-Datei auswählen.</p>
+<p>Nach dem Import zeigt die App die Anzahl der geladenen Objekte an. Wenn Edge lokalen Speicher zulässt, wird die Liste auf diesem Gerät gespeichert und von Schadensmeldung und Notdienst gemeinsam verwendet. Die ursprüngliche JSON-Datei muss dann nicht bei jedem Start erneut ausgewählt werden. <b>„Objektliste exportieren“</b> erstellt wieder eine separate Objektdatei; <b>„Objektliste lokal löschen“</b> entfernt nur die lokal eingelesene Liste. Die Objektliste ist nicht Bestandteil der normalen Schadensmeldungs- oder Notdienst-Sicherung.</p>
+<p><b>Firmen-Gerät:</b> Nur einen vom Unternehmen freigegebenen Speicherort verwenden. iCloud Drive, OneDrive oder andere Cloudspeicher nur verwenden, wenn sie betrieblich freigegeben sind.</p>
+<h3>4. Einsatz erfassen</h3><p>KW, Datum, Uhrzeit von/bis, Mitarbeiter, Melder, Objekt/Straße und Schadensmeldung ausfüllen. Stunden werden automatisch berechnet. Vorhandene Textbausteine können eingefügt und anschließend angepasst werden.</p>
 <h3>4. Eintrag speichern</h3><p>„Eintrag speichern“ speichert den Einsatz lokal und zeigt ihn in der Tabelle. Bei blockiertem lokalen Speicher bleiben Daten nur während der aktuellen Sitzung erhalten.</p>
 <h3>5. XLSX / CSV</h3><p>„Echte XLSX erstellen“ erzeugt eine Excel-Datei. „CSV erstellen“ erzeugt eine einfache Tabellen-Datei. Speichern oder Teilen hängt von den Freigaben des Geräts und der Unternehmensrichtlinie ab.</p>
 <h3>6. Drucken / PDF</h3><p>„Drucken/PDF“ öffnet die System-Druckfunktion. Dort kann – sofern vom Gerät unterstützt – auch als PDF gespeichert werden.</p>
@@ -191,7 +236,12 @@ Eine Datenübertragung erfolgt nur, wenn der Benutzer selbst eine externe Funkti
 <p><b>Managed company devices:</b> Features may be restricted by company policy. Names and duty records are stored persistently only if Edge storage is permitted on the device.</p>
 <h3>1. Open / Home Screen / Windows app</h3><p><b>iPad/iPhone Edge:</b> Open the app in Edge and use Share/browser menu → “Add to Home Screen” if available. Otherwise use an Edge favorite. <b>Windows Edge:</b> (…) → Apps → Install this site as an app, or use the install icon in the address bar.</p>
 <h3>2. Add employee locally</h3><p>Enter name and role in the employee section and save locally. Employee names are not hard-coded in the server files.</p>
-<h3>3. Record duty call</h3><p>Enter calendar week, date, start/end time, employee, reporter, property/street and incident description. Hours are calculated automatically. Prepared text blocks can be inserted and edited.</p>
+<h3>3. Import the separate property list</h3><p>The app contains no hard-coded property or address list. Properties are supplied in a separate JSON file.</p>
+<p><b>iPad/iPhone:</b> Store the JSON file in the Apple Files app. A company-approved folder such as <b>AuftragsApp → Objektlisten</b> is recommended. No special system folder is required. In the app tap <b>“Objektliste einlesen”</b>, browse to the folder and select the JSON file.</p>
+<p><b>Windows / Edge:</b> A folder such as <b>Documents\AuftragsApp\Objektlisten</b> is recommended. Downloads also works. Click <b>“Objektliste einlesen”</b>, browse to the folder in the Windows file picker and select the JSON file.</p>
+<p>After import, the app displays the number of loaded properties. If Edge local storage is allowed, the list remains stored on that device and is shared by the damage and emergency-duty areas. The original JSON file does not need to be selected on every start. <b>“Objektliste exportieren”</b> creates a separate property-list file; <b>“Objektliste lokal löschen”</b> removes only the locally imported list. The property list is not included in the normal damage or emergency-duty backups.</p>
+<p><b>Managed company device:</b> Use only a company-approved storage location. Use iCloud Drive, OneDrive or another cloud service only if company policy permits it.</p>
+<h3>4. Record duty call</h3><p>Enter calendar week, date, start/end time, employee, reporter, property/street and incident description. Hours are calculated automatically. Prepared text blocks can be inserted and edited.</p>
 <h3>4. Save entry</h3><p>“Eintrag speichern” stores the duty record locally and shows it in the table. If local storage is blocked, data remains only for the current session.</p>
 <h3>5. XLSX / CSV</h3><p>“Echte XLSX erstellen” creates an Excel file; “CSV erstellen” creates a simple table file. Saving and sharing depend on device/company permissions.</p>
 <h3>6. Print / PDF</h3><p>“Drucken/PDF” opens the system print function. Where supported, the result can also be saved as PDF.</p>
@@ -208,16 +258,105 @@ Eine Datenübertragung erfolgt nur, wenn der Benutzer selbst eine externe Funkti
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 var STORAGE_KEY="notdienst_asyl_eintraege_v3";
 var EMPLOYEE_KEY="notdienst_mitarbeiter_lokal_v1";
+var OBJECT_LIST_KEY="arbeitszentrale_objektliste_v1";
 var SESSION_ENTRIES=[];
+var SESSION_OBJECTS=[];
 var LOCAL_STORAGE_OK=false;
 function testLocalStorage(){try{var k="__edge_notdienst_test__";localStorage.setItem(k,"1");var ok=localStorage.getItem(k)==="1";localStorage.removeItem(k);return ok;}catch(e){return false;}}
 LOCAL_STORAGE_OK=testLocalStorage();
 var entries=loadEntries();
 var employees=loadEmployees();
+var objectList=loadObjectList();
 var editIndex=-1;
+function openTestInfo(){document.getElementById("testInfoOverlay").style.display="block";document.body.style.overflow="hidden";}
+function closeTestInfo(){document.getElementById("testInfoOverlay").style.display="none";document.body.style.overflow="";}
 function openHelp(){document.getElementById("helpOverlay").style.display="block";document.body.style.overflow="hidden";}
 function closeHelp(){document.getElementById("helpOverlay").style.display="none";document.body.style.overflow="";}
 
+
+
+function normalizeObjectList(data){
+  if(!data || data.appId!=="schadenmeldung-objekte" || Number(data.formatVersion)!==1 || !Array.isArray(data.objekte)) throw new Error("wrong-format");
+  var out=[],ids={};
+  data.objekte.forEach(function(raw){
+    if(!raw||typeof raw!=="object")return;
+    var id=String(raw.id||"").trim(),strasse=String(raw.strasse||"").trim();
+    if(!id||ids[id])return;
+    ids[id]=true;out.push({id:id,strasse:strasse});
+  });
+  if(!out.length)throw new Error("empty");
+  return out;
+}
+function loadObjectList(){
+  try{
+    if(LOCAL_STORAGE_OK){
+      var raw=localStorage.getItem(OBJECT_LIST_KEY);
+      if(!raw)return [];
+      var parsed=JSON.parse(raw);
+      return Array.isArray(parsed)?parsed:[];
+    }
+  }catch(e){}
+  return SESSION_OBJECTS.slice();
+}
+function saveObjectList(){
+  try{
+    if(LOCAL_STORAGE_OK){localStorage.setItem(OBJECT_LIST_KEY,JSON.stringify(objectList));return true;}
+  }catch(e){}
+  SESSION_OBJECTS=objectList.slice();return false;
+}
+function renderObjectList(selectedValue){
+  var sel=document.getElementById("objekt");if(!sel)return;
+  var previous=selectedValue!==undefined?selectedValue:sel.value;
+  sel.innerHTML="";
+  var first=document.createElement("option");
+  first.value="";first.textContent=objectList.length?"Bitte auswählen":"Keine Objektliste geladen";
+  sel.appendChild(first);
+  objectList.forEach(function(x){
+    var o=document.createElement("option");
+    o.value=x.id+"|"+x.strasse;
+    o.textContent=x.strasse?x.id+" – "+x.strasse:x.id;
+    sel.appendChild(o);
+  });
+  for(var i=0;i<sel.options.length;i++){if(previous&&sel.options[i].value===previous){sel.value=previous;break;}}
+  var st=document.getElementById("objectStatus");
+  if(st)st.textContent=objectList.length
+    ? objectList.length+" Objekt(e) lokal geladen. Die Liste liegt nicht im App-Code oder im Notdienst-Backup."
+    : "Keine Objektliste geladen.";
+}
+function importObjectList(event){
+  var input=event.target,file=input.files&&input.files[0];input.value="";if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(){
+    try{
+      var parsed=normalizeObjectList(JSON.parse(reader.result));
+      if(!confirm(parsed.length+" Objekt(e) lokal übernehmen? Eine vorhandene lokale Objektliste wird ersetzt."))return;
+      objectList=parsed;var persistent=saveObjectList();renderObjectList();
+      alert(persistent?"Objektliste wurde ausschließlich lokal auf diesem Gerät gespeichert.":"Objektliste ist geladen, kann wegen der Unternehmensrichtlinie aber nur während dieser Sitzung gehalten werden.");
+    }catch(e){alert("Ungültige Objektdatei. Erwartet wird appId „schadenmeldung-objekte“, formatVersion 1 und eine Objektliste.");}
+  };
+  reader.readAsText(file);
+}
+function exportObjectList(){
+  if(!objectList.length){alert("Keine lokale Objektliste vorhanden.");return;}
+  var out={appId:"schadenmeldung-objekte",formatVersion:1,createdAt:new Date().toISOString(),objekte:objectList};
+  var blob=new Blob([JSON.stringify(out,null,2)],{type:"application/json;charset=utf-8"}),a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);a.download="Objektliste_"+new Date().toISOString().slice(0,10)+".json";
+  document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href);},1000);
+}
+function deleteObjectList(){
+  if(!objectList.length){alert("Keine lokale Objektliste vorhanden.");return;}
+  if(!confirm("Lokale Objektliste auf diesem Gerät löschen? Bereits gespeicherte Notdiensteinträge bleiben erhalten."))return;
+  objectList=[];SESSION_OBJECTS=[];
+  try{if(LOCAL_STORAGE_OK)localStorage.removeItem(OBJECT_LIST_KEY);}catch(e){}
+  renderObjectList();
+}
+function ensureHistoricalObjectOption(value){
+  var sel=document.getElementById("objekt");if(!sel||!value)return;
+  for(var i=0;i<sel.options.length;i++)if(sel.options[i].value===value)return;
+  var parts=value.split("|"),o=document.createElement("option");
+  o.value=value;o.textContent=(parts[0]||"Historisches Objekt")+(parts[1]?" – "+parts.slice(1).join("|"):"")+" (nur aus gespeichertem Eintrag)";
+  o.setAttribute("data-historical","1");sel.appendChild(o);
+}
 
 function loadEntries(){try{if(LOCAL_STORAGE_OK){var raw=localStorage.getItem(STORAGE_KEY);return raw?JSON.parse(raw):[]}return SESSION_ENTRIES.slice();}catch(e){return SESSION_ENTRIES.slice();}}
 function migrateEntries(){
@@ -259,6 +398,8 @@ window.onload=function(){
   entries=loadEntries();
   employees=loadEmployees();
   renderEmployees();
+  objectList=loadObjectList();
+  renderObjectList();
   document.getElementById("datum").value=new Date().toISOString().slice(0,10);
   migrateEntries();
   render();
@@ -422,7 +563,7 @@ function editEntry(idx){
   document.getElementById("persnr").value=e.persnr||"";
   document.getElementById("melder").value=e.melder||"";
   document.getElementById("schaden").value=e.schaden||"";
-  document.getElementById("objekt").value=(e.objekt||"")+"|"+(e.strasse||"");
+  var objectValue=(e.objekt||"")+"|"+(e.strasse||"");ensureHistoricalObjectOption(objectValue);document.getElementById("objekt").value=objectValue;
 
   var select=document.getElementById("mitarbeiter"), found=false;
   for(var i=0;i<select.options.length;i++){
@@ -587,7 +728,7 @@ function exportBackup(){
   var d=new Date(),stamp=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
   a.download="Notdienst_Datensicherung_"+stamp+".notdienstbackup.json";
   document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(a.href);},1000);
-  alert("Notdienst-Sicherung erstellt. Sie enthält nur Notdienst-Daten und lokal angelegte Notdienst-Mitarbeiter.");
+  alert("Notdienst-Sicherung erstellt. Sie enthält nur Notdienst-Daten und lokal angelegte Notdienst-Mitarbeiter. Die separate Objektliste wird nicht mitgesichert.");
 }
 function importBackup(event){
   var file=event.target.files&&event.target.files[0]; if(!file)return;
