@@ -44,7 +44,7 @@ hr{border:0;border-top:1px solid #e1e4e8;margin:18px 0}
 <div id="storageStatus" style="background:#fff3cd;border:1px solid #d6b85b;padding:12px 14px;margin:10px;border-radius:10px;font:600 15px Arial,sans-serif;line-height:1.35">Speichertest läuft …</div>
 
 <header>Schaden- & Auftragsmeldung</header>
-<div class="appNav noPrint"><button onclick="location.href='notdienst.html'">Notdienst-App öffnen →</button><button onclick="openHelp()">📘 App-Anleitung DE / EN</button><button onclick="openTestInfo()">ℹ️ Info / Testversion / Datenschutz</button></div>
+<div class="appNav noPrint"><button onclick="location.href='notdienst.html'">Notdienst-App öffnen →</button><button onclick="openManagement()">⚙️ Verwaltung / Sicherungen</button><button onclick="openHelp()">📘 App-Anleitung DE / EN</button><button onclick="openTestInfo()">ℹ️ Info / Testversion / Datenschutz</button></div>
 <div id="transferNotice" class="note noPrint" style="display:none;margin:12px auto;max-width:1100px;padding:12px 16px;background:#fff3cd;border:1px solid #e6c75b;border-radius:10px"><b>Vom Notdienst übernommen:</b> Angaben wurden in dieses Formular übertragen. Bitte Schadensort, Gewerk und Priorität ergänzen.</div>
 <main>
 <section class="card noPrint">
@@ -74,13 +74,9 @@ hr{border:0;border-top:1px solid #e1e4e8;margin:18px 0}
 <select id="objekt">
 <option value="">Keine Objektliste geladen</option>
 </select>
-<div class="toolbar noPrint" style="margin-top:8px">
-  <button class="grey" type="button" onclick="document.getElementById('objectImportFile').click()">Objektliste einlesen</button>
-  <button class="orange" type="button" onclick="exportObjectList()">Objektliste exportieren</button>
-  <button class="red" type="button" onclick="deleteObjectList()">Objektliste lokal löschen</button>
-</div>
+
 <input id="objectImportFile" type="file" accept=".json,application/json" style="display:none" onchange="importObjectList(event)">
-<div id="objectStatus" class="muted" style="margin-top:6px">Keine Objektliste geladen.</div>
+<div id="objectStatus" class="muted" style="margin-top:6px">Keine Objektliste geladen.</div><div class="muted noPrint" style="margin-top:4px">Objektliste ändern: oben „Verwaltung / Sicherungen“ öffnen.</div>
 <div class="note noPrint" style="margin-top:8px">
 <b>Wo liegt die Objektdatei?</b><br>
 iPad/iPhone: Die JSON-Datei kann in der App „Dateien“ liegen. Empfohlen: ein freigegebener Ordner wie <b>AuftragsApp / Objektlisten</b>. Sie muss nicht in einem besonderen Systemordner liegen.<br>
@@ -132,7 +128,7 @@ Nach erfolgreichem Import liest die App die lokal gespeicherte Objektliste; die 
 </div>
 <br><div class="toolbar">
   <button class="grey" type="button" onclick="saveCustomTemplate()">Baustein lokal speichern</button>
-  <button class="orange" type="button" onclick="exportCustomTemplates()">Eigene Gewerke & Bausteine exportieren</button>
+  
 </div>
 
 <h4>Eigene Bausteine verwalten</h4>
@@ -175,21 +171,80 @@ Nach erfolgreichem Import liest die App die lokal gespeicherte Objektliste; die 
 <div class="tableWrap"><table id="tbl"><thead><tr><th>Datum</th><th>Objekt</th><th>Schadensort</th><th>Gewerk</th><th>Priorität</th><th>Melder</th><th>Auftrag</th><th>Fotos</th><th>Status</th><th>Mitarbeiter</th><th class="noPrint">Aktion</th></tr></thead><tbody></tbody></table></div>
 <br>
 <div class="privacyBox noPrint"><b>Offline & lokale Nutzdaten:</b> Nach einem erfolgreichen vollständigen Laden werden die App-Dateien per Service Worker für die Offline-Nutzung zwischengespeichert. Aufträge, Mitarbeiterdaten, E-Mail-Einstellungen und Fotos werden nicht an den Hosting-Server übertragen, sondern – soweit die Unternehmensrichtlinie es zulässt – lokal im Browser gespeichert. Die App enthält keine Analyse-Dienste und keine externen Inhaltsbibliotheken. Beim erstmaligen Laden bzw. bei Updates benötigt sie eine Verbindung zum Hosting-Server; beim Versand einer E-Mail werden die bewusst ausgewählten Inhalte an den verwendeten Maildienst übergeben.<br><br><b>Schadensmeldungs-Sicherung:</b> Die Backup-Datei enthält ausschließlich Daten dieser Schadensmeldungs-App: Aufträge, lokale Mitarbeiter, E-Mail-Einstellungen, eigene Textbausteine und gespeicherte Fotos. Bewahre sie geschützt auf; die Sicherungsdatei ist nicht zusätzlich verschlüsselt.</div>
-<br><div class="toolbar noPrint">
-<button class="green" onclick="exportFullBackup()">Schadensmeldung sichern</button>
-<button class="orange" onclick="document.getElementById('backupInput').click()">Schadensmeldung wiederherstellen</button>
 <input id="backupInput" type="file" accept="application/json,.json,.schadenbackup" style="display:none" onchange="importFullBackup(event)">
-<button class="grey" onclick="exportCSV()">CSV ohne Fotos</button>
-<button class="grey" onclick="window.print()">Drucken / PDF</button>
-<button class="red" onclick="clearEntries()">Alle Aufträge löschen</button>
-</div>
 </section>
 <section class="card noPrint" id="rechtliches">
 <h2>Über diese App / Rechtliches</h2>
-<div class="privacyBox"><b>© 2026 Ralf Peter Jung – Alle Rechte vorbehalten.</b><br><br>Diese App ist für die Erfassung und Bearbeitung von Schaden- und Auftragsmeldungen vorgesehen. Eine unerlaubte Vervielfältigung, Weitergabe, Veröffentlichung oder Veränderung der App bzw. ihrer individuellen Inhalte ist nicht gestattet, soweit keine entsprechende Erlaubnis vorliegt.<br><br><b>Datenschutz:</b> Personenbezogene Nutzdaten werden von der App nicht an den Hosting-Server übertragen. Lokale Speicherung erfolgt nur, soweit Browser und Unternehmensrichtlinie dies zulassen. Backup-Dateien sind unverschlüsselte Exportdateien und müssen organisatorisch geschützt abgelegt werden. Beim Laden der Web-App verarbeitet der Hosting-Anbieter technisch notwendige Verbindungsdaten; beim E-Mail-Versand verarbeitet der eingesetzte Maildienst die ausgewählten Inhalte. Verantwortlicher, Rechtsgrundlage, Aufbewahrungsfristen, Berechtigungen und weitere technische/organisatorische Maßnahmen sind vom betreibenden Unternehmen festzulegen.<br><br><b>Version:</b> V21 – Interne Testversion / Datenschutz-Hinweis</div>
+<div class="privacyBox"><b>© 2026 Ralf Peter Jung – Alle Rechte vorbehalten.</b><br><br>Diese App ist für die Erfassung und Bearbeitung von Schaden- und Auftragsmeldungen vorgesehen. Eine unerlaubte Vervielfältigung, Weitergabe, Veröffentlichung oder Veränderung der App bzw. ihrer individuellen Inhalte ist nicht gestattet, soweit keine entsprechende Erlaubnis vorliegt.<br><br><b>Datenschutz:</b> Personenbezogene Nutzdaten werden von der App nicht an den Hosting-Server übertragen. Lokale Speicherung erfolgt nur, soweit Browser und Unternehmensrichtlinie dies zulassen. Backup-Dateien sind unverschlüsselte Exportdateien und müssen organisatorisch geschützt abgelegt werden. Beim Laden der Web-App verarbeitet der Hosting-Anbieter technisch notwendige Verbindungsdaten; beim E-Mail-Versand verarbeitet der eingesetzte Maildienst die ausgewählten Inhalte. Verantwortlicher, Rechtsgrundlage, Aufbewahrungsfristen, Berechtigungen und weitere technische/organisatorische Maßnahmen sind vom betreibenden Unternehmen festzulegen.<br><br><b>Version:</b> V22 – aufgeräumte Verwaltung / Teamleitungs-Sammelimport</div>
 </section>
 </main>
 
+
+
+<div id="managementOverlay" class="helpOverlay noPrint" onclick="if(event.target===this)closeManagement()">
+<div class="helpBox">
+<h2>⚙️ Verwaltung / Sicherungen</h2>
+<p>Hier liegen alle Funktionen für Sicherung, Wiederherstellung, Objektlisten und Datenaustausch. Die normale Schadensmeldung bleibt dadurch übersichtlich.</p>
+
+<h3>Objektliste</h3>
+<div class="toolbar">
+<button class="grey" type="button" onclick="document.getElementById('objectImportFile').click()">Objektliste einlesen</button>
+<button class="orange" type="button" onclick="exportObjectList()">Objektliste exportieren</button>
+<button class="red" type="button" onclick="deleteObjectList()">Objektliste lokal löschen</button>
+</div>
+<p class="muted">Die Objektliste bleibt getrennt von Schadensmeldungs- und Notdienst-Backups.</p>
+
+<h3>Schadensmeldung sichern / wiederherstellen</h3>
+<div class="toolbar">
+<button class="green" type="button" onclick="exportFullBackup()">Schadensmeldung sichern</button>
+<button class="orange" type="button" onclick="document.getElementById('backupInput').click()">Schadensmeldung wiederherstellen</button>
+</div>
+
+<h3>Meldungen an Teamleitung</h3>
+<div class="toolbar">
+<button class="orange" type="button" onclick="exportTeamReports()">Meldungen für Teamleitung exportieren</button>
+</div>
+<p class="muted">Die App erstellt nur die Datei. Sie wird nicht automatisch versendet. Der Versand erfolgt anschließend manuell über die freigegebene E-Mail-App.</p>
+
+<div id="teamLeaderImportBox" style="display:none">
+<h3>Nur Teamleitung: Kollegen-Meldungen zusammenführen</h3>
+<div class="toolbar">
+<button class="green" type="button" onclick="document.getElementById('teamImportFile').click()">Kollegen-Meldungen zusammenführen</button>
+</div>
+<input id="teamImportFile" type="file" accept=".json,application/json" multiple style="display:none" onchange="importTeamReports(event)">
+</div>
+<div id="teamImportInfo" class="muted" style="margin-top:8px"></div>
+
+<h3>Eigene Gewerke / Bausteine</h3>
+<div class="toolbar">
+<button class="orange" type="button" onclick="exportCustomTemplates()">Eigene Gewerke & Bausteine exportieren</button>
+</div>
+
+<h3>Weitere Exporte / Verwaltung</h3>
+<div class="toolbar">
+<button class="grey" type="button" onclick="exportCSV()">CSV ohne Fotos</button>
+<button class="grey" type="button" onclick="window.print()">Drucken / PDF</button>
+<button class="red" type="button" onclick="clearEntries()">Alle Aufträge löschen</button>
+</div>
+
+<hr>
+<h3>Anleitung: Meldungen von Kollegen zusammenführen</h3>
+<p><b>Mitarbeiter:</b> Eigenen Namen auswählen → „Verwaltung / Sicherungen“ → „Meldungen für Teamleitung exportieren“. Die erzeugte JSON-Datei anschließend manuell in der betrieblich freigegebenen E-Mail-App als Anhang an die Teamleitung senden. Die App verschickt nichts automatisch.</p>
+<p><b>Teamleitung auf iPad/iPhone:</b> E-Mail-Anhang in der App „Dateien“ speichern. In der Schadensmeldungs-App den lokalen Mitarbeiter mit Rolle „Teamleitung“ auswählen → „Verwaltung / Sicherungen“ → „Kollegen-Meldungen zusammenführen“ → eine oder mehrere TeamExport-Dateien auswählen.</p>
+<p><b>Teamleitung unter Windows:</b> E-Mail-Anhang z. B. unter Dokumente oder Downloads speichern. Danach in Edge dieselben Schritte ausführen und die gespeicherten JSON-Dateien auswählen.</p>
+<p>Neue Meldungen werden ergänzt. Vorhandene Meldungen bleiben erhalten. Erkannte Duplikate werden übersprungen. Nach dem Import zeigt die App eine Zusammenfassung.</p>
+<p><b>Sicherheitsgrenze:</b> Die Teamleitungsprüfung basiert auf der lokal gespeicherten Rolle. Das ist eine Bedienbeschränkung, keine manipulationssichere Authentifizierung.</p>
+
+<div class="lang">
+<h3>Guide: merge colleagues' reports</h3>
+<p><b>Employee:</b> Select your own name → “Verwaltung / Sicherungen” → “Meldungen für Teamleitung exportieren”. Attach the generated JSON file manually in the approved company email app and send it to team management. The app does not send anything automatically.</p>
+<p><b>Team management on iPad/iPhone:</b> Save the email attachment in Files. Select the local employee with role “Teamleitung” → open “Verwaltung / Sicherungen” → choose “Kollegen-Meldungen zusammenführen” → select one or more TeamExport files.</p>
+<p><b>Windows:</b> Save the attachment in Documents or Downloads and select it from Edge in the same management area.</p>
+<p>New reports are added. Existing reports remain untouched and recognized duplicates are skipped.</p>
+</div>
+
+<button onclick="closeManagement()">Verwaltung schließen</button>
+</div></div>
 
 <div id="testInfoOverlay" class="helpOverlay noPrint" onclick="if(event.target===this)closeTestInfo()">
 <div class="helpBox">
@@ -246,8 +301,8 @@ Nach erfolgreichem Import liest die App die lokal gespeicherte Objektliste; die 
 <p>Speicherstatus prüfen. Unter „Mitarbeiter lokal verwalten“ Name und Rolle eingeben und „Mitarbeiter lokal speichern“ wählen. Namen sind nicht fest im Programm hinterlegt. Bei erlaubtem Edge-Speicher bleibt der Eintrag auf diesem Gerät erhalten.</p>
 <h3>3. Objektliste separat einlesen</h3>
 <p>Die App enthält keine feste Objekt- oder Adressliste. Die Objektliste kommt aus einer separaten JSON-Datei.</p>
-<p><b>iPad/iPhone:</b> Die Objektdatei zuerst in der Apple-App „Dateien“ ablegen. Empfohlen ist ein vom Unternehmen freigegebener Ordner, z. B. <b>AuftragsApp → Objektlisten</b>. Die Datei kann technisch auch unter „Downloads“ oder an einem anderen in „Dateien“ sichtbaren Ort liegen; ein besonderer App-Ordner ist nicht erforderlich. In der App anschließend <b>„Objektliste einlesen“</b> drücken, die Dateiauswahl öffnen, zum Ordner navigieren und die JSON-Datei auswählen.</p>
-<p><b>Windows / Edge:</b> Empfohlen ist z. B. <b>Dokumente\AuftragsApp\Objektlisten</b>. Die Datei kann auch in „Downloads“ liegen. In der App <b>„Objektliste einlesen“</b> drücken, im Windows-Dateiauswahldialog den Ordner öffnen und die JSON-Datei auswählen.</p>
+<p><b>iPad/iPhone:</b> Die Objektdatei zuerst in der Apple-App „Dateien“ ablegen. Empfohlen ist ein vom Unternehmen freigegebener Ordner, z. B. <b>AuftragsApp → Objektlisten</b>. Die Datei kann technisch auch unter „Downloads“ oder an einem anderen in „Dateien“ sichtbaren Ort liegen; ein besonderer App-Ordner ist nicht erforderlich. In der App oben <b>„Verwaltung / Sicherungen“</b> öffnen und anschließend <b>„Objektliste einlesen“</b> drücken, die Dateiauswahl öffnen, zum Ordner navigieren und die JSON-Datei auswählen.</p>
+<p><b>Windows / Edge:</b> Empfohlen ist z. B. <b>Dokumente\AuftragsApp\Objektlisten</b>. Die Datei kann auch in „Downloads“ liegen. In der App <b>„Verwaltung / Sicherungen“</b> öffnen und <b>„Objektliste einlesen“</b> drücken, im Windows-Dateiauswahldialog den Ordner öffnen und die JSON-Datei auswählen.</p>
 <p>Nach dem Import zeigt die App die Anzahl der geladenen Objekte an. Wenn Edge lokalen Speicher zulässt, wird die Liste auf diesem Gerät gespeichert und von Schadensmeldung und Notdienst gemeinsam verwendet. Die ursprüngliche JSON-Datei muss dann nicht bei jedem Start erneut ausgewählt werden. <b>„Objektliste exportieren“</b> erstellt wieder eine separate Objektdatei; <b>„Objektliste lokal löschen“</b> entfernt nur die lokal eingelesene Liste. Die Objektliste ist nicht Bestandteil der normalen Schadensmeldungs- oder Notdienst-Sicherung.</p>
 <p><b>Firmen-Gerät:</b> Nur einen vom Unternehmen freigegebenen Speicherort verwenden. iCloud Drive, OneDrive oder andere Cloudspeicher nur verwenden, wenn sie betrieblich freigegeben sind.</p>
 <h3>4. Schaden/Auftrag erfassen</h3>
@@ -315,6 +370,8 @@ Nach erfolgreichem Import liest die App die lokal gespeicherte Objektliste; die 
 
 <script>
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+function openManagement(){updateTeamImportAccess();document.getElementById('managementOverlay').style.display='block';document.body.style.overflow='hidden';}
+function closeManagement(){document.getElementById('managementOverlay').style.display='none';document.body.style.overflow='';}
 function openTestInfo(){document.getElementById('testInfoOverlay').style.display='block';document.body.style.overflow='hidden';}
 function closeTestInfo(){document.getElementById('testInfoOverlay').style.display='none';document.body.style.overflow='';}
 function openHelp(){document.getElementById('helpOverlay').style.display='block';document.body.style.overflow='hidden';}
@@ -456,9 +513,9 @@ function applyNotdienstTransfer(){
   updatePreview();
   window.scrollTo({top:0,behavior:'smooth'});
 }
-async function init(){await testIndexedDB();updateStorageStatus();entries=loadJSON(STORAGE_KEY,[]);employees=loadJSON(EMPLOYEE_KEY,[]);customTemplates=loadJSON(CUSTOM_TEMPLATE_KEY,[]);customTrades=loadJSON(CUSTOM_TRADE_KEY,[]);objectList=loadObjectList();const d=new Date();document.getElementById('datum').value=d.toISOString().slice(0,10);setKW();loadSettings();renderEmployees();refreshTradeOptions();loadTradeTemplates();renderObjectList();renderCurrentPhotos();applyNotdienstTransfer();updatePreview();await render();}
+async function init(){await testIndexedDB();updateStorageStatus();entries=loadJSON(STORAGE_KEY,[]);employees=loadJSON(EMPLOYEE_KEY,[]);customTemplates=loadJSON(CUSTOM_TEMPLATE_KEY,[]);customTrades=loadJSON(CUSTOM_TRADE_KEY,[]);objectList=loadObjectList();const d=new Date();document.getElementById('datum').value=d.toISOString().slice(0,10);setKW();loadSettings();renderEmployees();refreshTradeOptions();loadTradeTemplates();renderObjectList();updateTeamImportAccess();renderCurrentPhotos();applyNotdienstTransfer();updatePreview();await render();}
 window.addEventListener('load',init);
-function setRole(){const p=document.getElementById('mitarbeiter').value.split('|');document.getElementById('rolle').value=p[1]||'';updatePreview()}
+function setRole(){const p=document.getElementById('mitarbeiter').value.split('|');document.getElementById('rolle').value=p[1]||'';updateTeamImportAccess();updatePreview()}
 function isoWeek(dateString){const d=new Date(dateString+'T12:00:00');const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const day=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-day);const y=new Date(Date.UTC(t.getUTCFullYear(),0,1));return Math.ceil((((t-y)/86400000)+1)/7)}
 function setKW(){const d=document.getElementById('datum').value;document.getElementById('kw').value=d?String(isoWeek(d)).padStart(2,'0'):'';updatePreview()}
 
@@ -825,6 +882,81 @@ function exportCustomTemplates(){
   a.click();
   a.remove();
   setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+
+
+function isTeamLeader(){
+  const parts=(document.getElementById('mitarbeiter')?.value||'').split('|');
+  const role=String(parts[1]||'').trim().toLocaleLowerCase('de-DE');
+  return role==='teamleitung' || role==='teamleiter' || role==='teamleiterin';
+}
+function updateTeamImportAccess(){
+  const box=document.getElementById('teamLeaderImportBox');
+  const note=document.getElementById('teamImportInfo');
+  if(!box||!note)return;
+  if(isTeamLeader()){
+    box.style.display='block';
+    note.textContent='Teamleitungs-Funktion aktiv: Kollegen-Meldungen können zusammengeführt werden.';
+  }else{
+    box.style.display='none';
+    note.textContent='Der Sammelimport wird nur bei lokal ausgewählter Rolle „Teamleitung“ freigeschaltet.';
+  }
+}
+function exportTeamReports(){
+  const selected=(document.getElementById('mitarbeiter')?.value||'').split('|')[0]||'';
+  const ownEntries=selected ? entries.filter(e=>String(e.monteur||'')===selected) : entries.slice();
+  if(!ownEntries.length){alert('Keine Schadensmeldungen zum Export vorhanden.');return;}
+  const payload={appId:'schadenmeldung-team-export',formatVersion:1,createdAt:new Date().toISOString(),entries:ownEntries};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='Schadensmeldungen_TeamExport_'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function entryFingerprint(e){
+  if(e && e.id!==undefined && e.id!==null && String(e.id)!=='') return 'id:'+String(e.id);
+  return 'fp:'+[
+    e?.datum||'',e?.monteur||'',e?.objekt||'',e?.strasse||'',
+    e?.schadensort||'',e?.gewerk||'',e?.schaden||''
+  ].join('|');
+}
+async function importTeamReports(event){
+  if(!isTeamLeader()){
+    event.target.value='';
+    updateTeamImportAccess();
+    alert('Import abgelehnt: Diese Funktion ist nur für die Rolle „Teamleitung“ freigegeben.');
+    return;
+  }
+  const files=[...(event.target.files||[])];
+  event.target.value='';
+  if(!files.length)return;
+
+  const existing=new Set(entries.map(entryFingerprint));
+  let added=0,duplicates=0,invalid=0,recognized=0;
+
+  for(const file of files){
+    try{
+      const data=JSON.parse(await file.text());
+      if(!data || data.appId!=='schadenmeldung-team-export' || Number(data.formatVersion)!==1 || !Array.isArray(data.entries)){
+        invalid++;continue;
+      }
+      recognized++;
+      for(const raw of data.entries){
+        if(!raw || typeof raw!=='object'){invalid++;continue;}
+        const e={...raw};
+        const fp=entryFingerprint(e);
+        if(existing.has(fp)){duplicates++;continue;}
+        if(e.id===undefined || e.id===null || String(e.id)==='') e.id=Date.now()+Math.floor(Math.random()*1000000);
+        existing.add(entryFingerprint(e));
+        entries.push(e);added++;
+      }
+    }catch(err){invalid++;}
+  }
+
+  saveJSON(STORAGE_KEY,entries);
+  await render();
+  alert('Import abgeschlossen:\n'+added+' neu übernommen\n'+duplicates+' Duplikat(e) übersprungen\n'+invalid+' ungültig\n'+recognized+' Importdatei(en) erkannt');
 }
 
 function saveSettings(){saveJSON(SETTINGS_KEY,{to:document.getElementById('mailTo').value.trim(),cc:document.getElementById('mailCc').value.trim()})}

@@ -1,5 +1,5 @@
 {
-  "name": "Schaden- & Auftragsmeldung mit Notdienst",
+  "name": "Schaden- und Auftragsmeldung",
   "short_name": "Schadenmeldung",
   "start_url": "./index.html",
   "scope": "./",
